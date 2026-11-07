@@ -1,0 +1,16 @@
+{
+  "name": "CareCircle",
+  "short_name": "CareCircle",
+  "description": "Coordinate care for the people you love: medications, appointments, caregiver schedules and an emergency card.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F8F7F4",
+  "theme_color": "#4A7C6F",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>CareCircle — Family Senior Care</title>
+<meta name="description" content="CareCircle helps families coordinate care for the people they love: medications, appointments, caregiver schedules and an emergency card.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#4A7C6F">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="CareCircle">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root {
+  --navy: #1E2D4A;
+  --navy-light: #2A3F63;
+  --sage: #4A7C6F;
+  --sage-light: #5D9B8C;
+  --sage-faint: #E8F3F1;
+  --amber: #C4892A;
+  --amber-faint: #FDF3E3;
+  --red: #C0392B;
+  --red-faint: #FDEDEC;
+  --surface: #F8F7F4;
+  --card: #FFFFFF;
+  --slate: #E8EDF3;
+  --border: #D0D8E4;
+  --text: #1A2332;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --success: #2D7D5F;
+  --success-faint: #E8F5EF;
+  --tab-h: 72px;
+  --header-h: 64px;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 2px 12px rgba(30,45,74,0.08);
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --base: 17px;
+  --large: 20px;
+}
+[data-large-text="true"] {
+  --base: 20px;
+  --large: 24px;
+}
+[data-high-contrast="true"] {
+  --text-secondary: #1A2332;
+  --text-muted: #2D3748;
+  --border: #8A9AB5;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; overflow: hidden; font-family: var(--font); background: var(--surface); color: var(--text); font-size: var(--base); }
+
+/* Layout */
+#app { display: flex; flex-direction: column; height: 100dvh; max-width: 480px; margin: 0 auto; position: relative; }
+#header { height: var(--header-h); background: var(--card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; position: relative; }
+#header-title { font-size: 18px; font-weight: 600; color: var(--navy); flex: 1; }
+#header-badge { background: var(--sage); color: white; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.03em; }
+#header-action { min-width: 48px; min-height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: none; font-size: 24px; color: var(--navy); border-radius: 50%; transition: background 0.15s; }
+#header-action:hover { background: var(--slate); }
+
+#screens { flex: 1; overflow: hidden; position: relative; }
+.screen { position: absolute; inset: 0; overflow-y: auto; padding-bottom: 16px; display: none; -webkit-overflow-scrolling: touch; }
+@keyframes screenIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.screen.active { display: block; animation: screenIn 0.22s ease; }
+
+#tabbar { height: var(--tab-h); background: var(--card); border-top: 1px solid var(--border); display: flex; flex-shrink: 0; }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer; border: none; background: none; padding: 8px 4px; min-width: 48px; position: relative; transition: color 0.15s; color: var(--text-muted); }
+.tab.active { color: var(--sage); }
+.tab svg { width: 26px; height: 26px; stroke-width: 1.8; }
+.tab-label { font-size: 11px; font-weight: 500; }
+.tab-dot { position: absolute; top: 10px; right: calc(50% - 16px); width: 8px; height: 8px; background: var(--amber); border-radius: 50%; border: 2px solid var(--card); display: none; }
+.tab-dot.show { display: block; }
+
+/* Cards */
+.card { background: var(--card); border-radius: var(--radius); padding: 18px; margin: 0 16px 12px; box-shadow: var(--shadow); transition: box-shadow 0.2s ease, transform 0.2s ease; }
+.card:hover { box-shadow: 0 4px 18px rgba(30,45,74,0.14); transform: translateY(-1px); }
+.card-sm { padding: 14px 16px; margin: 0 16px 8px; }
+.section-label { font-size: 13px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin: 20px 20px 10px; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 12px 24px; border-radius: 12px; border: none; cursor: pointer; font-family: var(--font); font-size: var(--base); font-weight: 600; transition: all 0.15s ease; text-decoration: none; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--sage); color: white; width: 100%; box-shadow: 0 2px 8px rgba(74,124,111,0.28); }
+.btn-primary:hover { background: var(--sage-light); box-shadow: 0 4px 16px rgba(74,124,111,0.38); transform: translateY(-1px); }
+.btn-secondary { background: var(--slate); color: var(--navy); width: 100%; }
+.btn-secondary:hover { background: var(--border); transform: translateY(-1px); }
+.btn-danger { background: var(--red-faint); color: var(--red); width: 100%; }
+.btn-danger:hover { background: #f6d5d1; transform: translateY(-1px); }
+.btn-sm { min-height: 40px; padding: 8px 16px; font-size: 15px; border-radius: 10px; }
+.btn-icon { min-width: 52px; min-height: 52px; width: 52px; height: 52px; border-radius: 50%; padding: 0; }
+
+/* FAB */
+.fab { position: fixed; bottom: calc(var(--tab-h) + 20px); right: 20px; width: 60px; height: 60px; background: var(--sage); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(74,124,111,0.4); cursor: pointer; border: none; color: white; font-size: 28px; z-index: 50; transition: transform 0.15s; }
+.fab:hover { transform: scale(1.05); }
+.fab:active { transform: scale(0.95); }
+
+/* Status pills */
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; }
+.pill-green { background: var(--success-faint); color: var(--success); }
+.pill-amber { background: var(--amber-faint); color: var(--amber); }
+.pill-red { background: var(--red-faint); color: var(--red); }
+.pill-slate { background: var(--slate); color: var(--text-secondary); }
+.pill-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+/* Forms */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+.form-input { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: var(--base); color: var(--text); background: var(--card); transition: border-color 0.15s; }
+.form-input:focus { outline: none; border-color: var(--sage); }
+.form-input.input-error { border-color: var(--red); }
+.input-error-msg { font-size: 12px; color: var(--red); margin-top: 6px; font-weight: 600; display: none; }
+.input-error-msg.show { display: block; }
+.form-input.pw-weak { border-color: var(--red); }
+.form-input.pw-medium { border-color: var(--amber); }
+.form-input.pw-strong { border-color: var(--sage); }
+.password-meter { display: flex; gap: 4px; margin-top: 8px; }
+.password-meter-seg { flex: 1; height: 4px; border-radius: 2px; background: var(--border); transition: background 0.15s; }
+.password-meter-seg.fill-weak { background: var(--red); }
+.password-meter-seg.fill-medium { background: var(--amber); }
+.password-meter-seg.fill-strong { background: var(--sage); }
+.password-hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; font-weight: 600; transition: color 0.15s; }
+.password-hint.pw-weak { color: var(--red); }
+.password-hint.pw-medium { color: var(--amber); }
+.password-hint.pw-strong { color: var(--sage); }
+.form-input::placeholder { color: var(--text-muted); }
+.form-input:disabled { background: var(--slate); color: var(--text-secondary); }
+select.form-input { -webkit-appearance: none; appearance: none; cursor: pointer; }
+
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(20,30,50,0); z-index: 100; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s ease, background 0.25s ease; }
+#forgot-password-modal, #invite-code-modal { z-index: 10000; }
+#invite-modal { z-index: 200; }
+.modal-overlay.open { opacity: 1; pointer-events: auto; background: rgba(20,30,50,0.55); }
+.modal { background: var(--card); border-radius: 24px 24px 0 0; width: 100%; max-width: 480px; max-height: 90dvh; overflow-y: auto; padding: 0 0 env(safe-area-inset-bottom); transform: translateY(28px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 0; }
+.modal-header { padding: 20px 20px 0; display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-size: var(--large); font-weight: 700; color: var(--navy); }
+.modal-close { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: var(--slate); border-radius: 50%; cursor: pointer; font-size: 20px; color: var(--text-secondary); }
+.modal-body { padding: 20px; }
+
+/* ═══════════════════════════════
+   SCREEN 1 — HOME DASHBOARD
+═══════════════════════════════ */
+.greeting { padding: 20px 20px 8px; }
+.greeting h1 { font-size: 26px; font-weight: 700; color: var(--navy); line-height: 1.2; }
+.greeting p { font-size: 15px; color: var(--text-muted); margin-top: 4px; }
+
+.alert-banner { margin: 0 16px 12px; background: var(--amber-faint); border: 1.5px solid #E8A83A; border-radius: var(--radius); padding: 14px 16px; display: flex; align-items: flex-start; gap: 12px; }
+.alert-banner svg { width: 22px; height: 22px; color: var(--amber); flex-shrink: 0; margin-top: 1px; }
+.alert-banner-text h3 { font-size: 15px; font-weight: 700; color: #7A5A18; }
+.alert-banner-text p { font-size: 14px; color: #9A7128; margin-top: 2px; }
+
+.stat-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 0 16px 12px; }
+.stat-card { background: var(--card); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+.stat-num { font-size: 32px; font-weight: 700; color: var(--navy); line-height: 1; }
+.stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.stat-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+
+.med-item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--slate); }
+.med-item:last-child { border-bottom: none; }
+.med-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+.med-icon-sage { background: var(--sage-faint); }
+.med-info { flex: 1; min-width: 0; }
+.med-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.med-dose { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.med-time { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+
+.shift-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--slate); }
+.shift-item:last-child { border-bottom: none; }
+.shift-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: white; flex-shrink: 0; }
+.shift-info { flex: 1; }
+.shift-name { font-size: 15px; font-weight: 600; }
+.shift-days { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* ═══════════════════════════════
+   SCREEN 2 — MEDICATIONS
+═══════════════════════════════ */
+.med-card { background: var(--card); border-radius: var(--radius); margin: 0 16px 10px; box-shadow: var(--shadow); overflow: hidden; }
+.med-card-header { padding: 16px 18px 14px; display: flex; align-items: flex-start; gap: 14px; }
+.med-card-icon { width: 50px; height: 50px; border-radius: 14px; background: var(--sage-faint); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.med-card-info { flex: 1; }
+.med-card-name { font-size: var(--large); font-weight: 700; color: var(--navy); }
+.med-card-dose { font-size: 14px; color: var(--text-secondary); margin-top: 3px; }
+.med-card-reason { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+.med-card-footer { background: var(--surface); border-top: 1px solid var(--slate); padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.med-times { display: flex; gap: 6px; flex-wrap: wrap; }
+.time-chip { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; font-size: 13px; font-weight: 600; color: var(--text); }
+.time-chip.confirmed { background: var(--success-faint); border-color: var(--success); color: var(--success); }
+.take-btn { background: var(--sage); color: white; border: none; border-radius: 10px; padding: 10px 18px; font-family: var(--font); font-size: 14px; font-weight: 700; cursor: pointer; min-height: 44px; display: flex; align-items: center; gap: 6px; }
+.take-btn:hover { background: var(--sage-light); }
+.take-btn.done { background: var(--success-faint); color: var(--success); }
+
+/* ═══════════════════════════════
+   SCREEN 3 — CALENDAR
+═══════════════════════════════ */
+.mini-cal { background: var(--card); margin: 0 16px 12px; border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); }
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.cal-month { font-size: var(--large); font-weight: 700; color: var(--navy); }
+.cal-btn { min-width: 44px; min-height: 44px; background: none; border: none; cursor: pointer; font-size: 22px; color: var(--text-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.cal-btn:hover { background: var(--slate); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-dow { text-align: center; font-size: 12px; font-weight: 600; color: var(--text-muted); padding: 4px 0 8px; }
+.cal-day { text-align: center; padding: 8px 2px; font-size: 15px; cursor: pointer; border-radius: 8px; min-height: 40px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 2px; transition: background 0.1s; position: relative; }
+.cal-day:hover { background: var(--slate); }
+.cal-day.today { background: var(--navy); color: white; font-weight: 700; }
+.cal-day.selected { background: var(--sage-faint); color: var(--sage); font-weight: 700; }
+.cal-day.has-event::after { content: ''; width: 5px; height: 5px; background: var(--sage); border-radius: 50%; position: absolute; bottom: 4px; }
+.cal-day.empty { cursor: default; }
+
+.cal-day-popover {
+  position: fixed;
+  z-index: 90;
+  background: var(--navy);
+  color: white;
+  border-radius: 12px;
+  padding: 10px 14px;
+  box-shadow: 0 8px 24px rgba(30,45,74,0.28);
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 220px;
+  pointer-events: none;
+  opacity: 0;
+  /* "above" is the default: anchored above the day cell, so its own
+     bottom edge sits at the anchor point (translateY(-100%)). */
+  transform: translate(-50%, calc(-100% + 6px)) scale(0.92);
+  transform-origin: bottom center;
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+.cal-day-popover.show { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+.cal-day-popover.below { transform: translate(-50%, -6px) scale(0.92); transform-origin: top center; }
+.cal-day-popover.below.show { transform: translate(-50%, 0) scale(1); }
+.cal-day-popover-title { font-weight: 700; margin-bottom: 2px; }
+.cal-day-popover-time { color: var(--slate); opacity: 0.85; }
+
+.event-item { display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--slate); align-items: flex-start; }
+.event-item:last-child { border-bottom: none; }
+.event-time-col { min-width: 56px; text-align: right; }
+.event-time { font-size: 13px; font-weight: 700; color: var(--text-secondary); }
+.event-date-s { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.event-bar { width: 3px; border-radius: 3px; align-self: stretch; flex-shrink: 0; margin: 2px 0; }
+.event-bar-sage { background: var(--sage); }
+.event-bar-amber { background: var(--amber); }
+.event-bar-navy { background: var(--navy); }
+.event-body { flex: 1; }
+.event-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.event-sub { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+.event-note { font-size: 13px; color: var(--amber); margin-top: 4px; font-weight: 500; }
+
+.shift-row { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x pinch-zoom; cursor: grab; }
+.shift-row::-webkit-scrollbar { display: none; }
+.shift-chip { flex-shrink: 0; background: var(--card); border-radius: 12px; padding: 10px 14px; box-shadow: var(--shadow); text-align: center; min-width: 80px; }
+.shift-chip-day { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.shift-chip-who { font-size: 13px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+.shift-chip-avatar { width: 32px; height: 32px; border-radius: 50%; margin: 4px auto 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; }
+.shift-chip.gap .shift-chip-who { color: var(--red); }
+.shift-chip.gap .shift-chip-avatar { background: var(--red-faint); color: var(--red); }
+
+/* ═══════════════════════════════
+   SCREEN 4 — FAMILY FEED
+═══════════════════════════════ */
+.feed-item { background: var(--card); border-radius: var(--radius); margin: 0 16px 10px; box-shadow: var(--shadow); overflow: hidden; }
+.feed-header { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; }
+.feed-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: white; flex-shrink: 0; }
+.feed-meta { flex: 1; }
+.feed-who { font-size: 14px; font-weight: 700; color: var(--navy); }
+.feed-when { font-size: 12px; color: var(--text-muted); }
+.feed-content { padding: 0 16px 14px; font-size: var(--base); color: var(--text); line-height: 1.55; }
+.feed-tag { display: inline-block; background: var(--sage-faint); color: var(--sage); padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+.feed-actions { border-top: 1px solid var(--slate); padding: 10px 16px; display: flex; gap: 16px; }
+.feed-action-btn { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text-secondary); background: none; border: none; cursor: pointer; min-height: 40px; padding: 4px 8px; border-radius: 8px; }
+.feed-action-btn:hover { background: var(--slate); }
+.feed-comments { background: var(--surface); padding: 10px 16px; }
+.feed-comment { display: flex; gap: 8px; margin-bottom: 8px; }
+.feed-comment:last-child { margin-bottom: 0; }
+.comment-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; margin-top: 2px; }
+.comment-bubble { background: var(--card); border-radius: 0 10px 10px 10px; padding: 8px 12px; flex: 1; }
+.comment-who { font-size: 12px; font-weight: 700; color: var(--navy); }
+.comment-text { font-size: 14px; color: var(--text); margin-top: 2px; line-height: 1.4; }
+.pinned-banner { background: var(--navy); color: white; margin: 0 16px 10px; border-radius: var(--radius); padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+.pinned-banner h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.pinned-banner p { font-size: 13px; opacity: 0.82; line-height: 1.5; }
+
+/* ═══════════════════════════════
+   SCREEN 5 — EMERGENCY CARD
+═══════════════════════════════ */
+.em-card { background: linear-gradient(145deg, #1E2D4A 0%, #2A3F63 100%); border-radius: 20px; margin: 0 16px 16px; padding: 24px; color: white; box-shadow: 0 6px 30px rgba(30,45,74,0.25); }
+.em-card-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; opacity: 0.65; text-transform: uppercase; margin-bottom: 16px; }
+.em-card-name { font-size: 28px; font-weight: 800; line-height: 1; }
+.em-card-dob { font-size: 15px; opacity: 0.75; margin-top: 6px; }
+.em-card-divider { border: none; border-top: 1px solid rgba(255,255,255,0.15); margin: 18px 0; }
+.em-card-row { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.em-card-field { }
+.em-card-field-label { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; opacity: 0.6; text-transform: uppercase; }
+.em-card-field-value { font-size: 15px; font-weight: 600; margin-top: 3px; }
+.em-allergy-chip { display: inline-block; background: rgba(192,57,43,0.3); border: 1px solid rgba(192,57,43,0.5); color: #FFB3AE; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 600; margin: 3px 4px 3px 0; }
+
+.em-section { background: var(--card); border-radius: var(--radius); margin: 0 16px 10px; padding: 16px 18px; box-shadow: var(--shadow); }
+.em-section h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
+.em-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--slate); font-size: 15px; }
+.em-row:last-child { border-bottom: none; }
+.em-row-label { color: var(--text-secondary); font-size: 14px; }
+.em-row-value { color: var(--text); font-weight: 600; text-align: right; max-width: 60%; }
+.share-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--navy); color: white; border: none; border-radius: 14px; width: calc(100% - 32px); margin: 0 16px 10px; min-height: 56px; font-size: var(--base); font-weight: 700; cursor: pointer; font-family: var(--font); transition: background 0.15s; }
+.share-btn:hover { background: var(--navy-light); }
+
+/* ═══════════════════════════════
+   SETTINGS
+═══════════════════════════════ */
+.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; background: var(--card); border-bottom: 1px solid var(--slate); min-height: 64px; cursor: pointer; }
+.settings-label { font-size: var(--base); font-weight: 500; color: var(--text); }
+.settings-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.toggle { width: 52px; height: 30px; border-radius: 15px; background: var(--border); position: relative; transition: background 0.2s; flex-shrink: 0; border: none; cursor: pointer; }
+.toggle.on { background: var(--sage); }
+.toggle::after { content: ''; width: 24px; height: 24px; background: white; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+.toggle.on::after { transform: translateX(22px); }
+
+/* Role badge */
+.role-badge { background: var(--sage-faint); color: var(--sage); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; }
+
+/* Toast */
+#toast { position: fixed; bottom: calc(var(--tab-h) + 24px); left: 50%; transform: translateX(-50%); background: var(--navy); color: white; padding: 12px 20px; border-radius: 12px; font-size: 15px; font-weight: 600; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.22s ease; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-width: calc(100vw - 40px); text-align: center; }
+#toast.show { opacity: 1; pointer-events: auto; }
+
+/* Confirm animation */
+@keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.12); } 100% { transform: scale(1); } }
+.pop { animation: pop 0.3s ease; }
+
+/* Senior mode */
+.senior-screen { background: var(--surface); }
+.senior-reminder { background: var(--card); border-radius: 20px; margin: 16px; padding: 24px; box-shadow: var(--shadow); text-align: center; }
+.senior-med-name { font-size: 28px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+.senior-med-dose { font-size: 20px; color: var(--text-secondary); margin-bottom: 20px; }
+.senior-take-btn { width: 100%; min-height: 72px; background: var(--sage); color: white; border: none; border-radius: 18px; font-size: 22px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; font-family: var(--font); transition: background 0.15s; }
+.senior-take-btn:active { background: var(--sage-light); }
+.senior-take-btn.confirmed { background: var(--success); }
+.senior-photo-area { border: 2.5px dashed var(--border); border-radius: 16px; padding: 32px; text-align: center; cursor: pointer; margin-top: 16px; color: var(--text-muted); font-size: 15px; }
+
+/* ═══════════════════════════════
+   AUTH SCREEN
+═══════════════════════════════ */
+#auth-screen, #join-family-screen { position: fixed; inset: 0; background: var(--surface); z-index: 9998; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+#session-restore-screen { display: none; position: fixed; inset: 0; background: var(--surface); z-index: 9999; max-width: 480px; margin: 0 auto; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+#session-restore-screen.show { display: flex; }
+#busy-overlay { display: none; position: fixed; inset: 0; background: rgba(248,247,244,0.9); z-index: 20001; flex-direction: column; align-items: center; justify-content: center; gap: 14px; font-size: 16px; font-weight: 700; color: var(--navy); }
+#busy-overlay.show { display: flex; }
+.restore-spinner { width: 32px; height: 32px; border: 3px solid var(--slate); border-top-color: var(--sage); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#onboarding-screen { position: fixed; inset: 0; background: var(--surface); z-index: 9998; display: flex; flex-direction: column; max-width: 480px; margin: 0 auto; overflow: hidden; }
+.auth-hero { padding: 56px 28px 20px; text-align: center; }
+.auth-logo { width: 64px; height: 64px; background: var(--sage); border-radius: 18px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
+.auth-logo svg { width: 32px; height: 32px; color: white; }
+.auth-hero h1 { font-size: 26px; font-weight: 800; color: var(--navy); }
+.auth-hero p { font-size: 15px; color: var(--text-muted); margin-top: 6px; }
+.auth-tabs { display: flex; margin: 4px 20px 22px; background: var(--slate); border-radius: 12px; padding: 4px; }
+.auth-tab { flex: 1; text-align: center; padding: 10px; border-radius: 9px; font-size: 15px; font-weight: 700; color: var(--text-muted); cursor: pointer; border: none; background: none; min-height: 44px; font-family: var(--font); }
+.auth-tab.active { background: var(--card); color: var(--navy); box-shadow: var(--shadow); }
+.auth-form { padding: 0 20px 32px; }
+.auth-form.hidden { display: none; }
+.auth-error { display: none; background: var(--red-faint); color: var(--red); border-radius: 10px; padding: 10px 14px; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+.auth-error.show { display: block; }
+.forgot-password-link { display: block; margin: 14px auto 0; background: none; border: none; color: var(--sage); font-size: 14px; font-weight: 700; cursor: pointer; font-family: var(--font); padding: 8px; min-height: 44px; }
+
+/* ═══════════════════════════════
+   ONBOARDING (Emergency Health Summary)
+═══════════════════════════════ */
+.ob-header { padding: 20px 20px 0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.ob-header-label { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+.ob-skip { background: none; border: none; color: var(--text-muted); font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px; min-height: 44px; font-family: var(--font); }
+.ob-progress { display: flex; gap: 6px; padding: 12px 20px 22px; flex-shrink: 0; }
+.ob-dot { flex: 1; height: 4px; border-radius: 2px; background: var(--slate); transition: background 0.2s; }
+.ob-dot.done, .ob-dot.active { background: var(--sage); }
+.ob-step { padding: 0 20px 16px; display: none; flex-direction: column; flex: 1; }
+.ob-step.active { display: flex; overflow-y: auto; min-height: 0; -webkit-overflow-scrolling: touch; }
+.ob-step h2 { font-size: 22px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+.ob-step .ob-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.5; }
+.ob-actions { display: flex; gap: 10px; padding: 16px 20px calc(20px + env(safe-area-inset-bottom)); flex-shrink: 0; }
+.ob-actions .btn { flex: 1; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.plan-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.plan-card.selected { border-color: var(--sage); background: var(--sage-faint); }
+.plan-card-header { display: flex; justify-content: space-between; align-items: baseline; }
+.plan-card-name { font-size: 17px; font-weight: 700; color: var(--navy); }
+.plan-card-price { font-size: 15px; font-weight: 700; color: var(--sage); }
+.plan-card-desc { font-size: 14px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
+.ob-med-row { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.ob-med-row-name { font-size: 14px; font-weight: 700; color: var(--navy); }
+.ob-med-row-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.ob-med-remove { min-width: 36px; min-height: 36px; width: 36px; height: 36px; border: none; background: var(--slate); border-radius: 50%; color: var(--text-secondary); font-size: 15px; cursor: pointer; flex-shrink: 0; }
+
+/* Calendar hover popover */
+.appt-detail-item { padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--slate); }
+.appt-detail-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.appt-detail-title { font-size: 17px; font-weight: 700; color: var(--navy); }
+.appt-detail-meta { font-size: 14px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
+.appt-detail-note { font-size: 13px; color: var(--amber); font-weight: 600; margin-top: 8px; }
+.cal-day.has-event { cursor: pointer; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+</style>
+<style>
+.flatpickr-calendar{background:transparent;opacity:0;display:none;text-align:center;visibility:hidden;padding:0;-webkit-animation:none;animation:none;direction:ltr;border:0;font-size:14px;line-height:24px;border-radius:5px;position:absolute;width:307.875px;-webkit-box-sizing:border-box;box-sizing:border-box;-ms-touch-action:manipulation;touch-action:manipulation;background:#fff;-webkit-box-shadow:1px 0 0 #e6e6e6,-1px 0 0 #e6e6e6,0 1px 0 #e6e6e6,0 -1px 0 #e6e6e6,0 3px 13px rgba(0,0,0,0.08);box-shadow:1px 0 0 #e6e6e6,-1px 0 0 #e6e6e6,0 1px 0 #e6e6e6,0 -1px 0 #e6e6e6,0 3px 13px rgba(0,0,0,0.08)}.flatpickr-calendar.open,.flatpickr-calendar.inline{opacity:1;max-height:640px;visibility:visible}.flatpickr-calendar.open{display:inline-block;z-index:99999}.flatpickr-calendar.animate.open{-webkit-animation:fpFadeInDown 300ms cubic-bezier(.23,1,.32,1);animation:fpFadeInDown 300ms cubic-bezier(.23,1,.32,1)}.flatpickr-calendar.inline{display:block;position:relative;top:2px}.flatpickr-calendar.static{position:absolute;top:calc(100% + 2px)}.flatpickr-calendar.static.open{z-index:999;display:block}.flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+1) .flatpickr-day.inRange:nth-child(7n+7){-webkit-box-shadow:none !important;box-shadow:none !important}.flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+2) .flatpickr-day.inRange:nth-child(7n+1){-webkit-box-shadow:-2px 0 0 #e6e6e6,5px 0 0 #e6e6e6;box-shadow:-2px 0 0 #e6e6e6,5px 0 0 #e6e6e6}.flatpickr-calendar .hasWeeks .dayContainer,.flatpickr-calendar .hasTime .dayContainer{border-bottom:0;border-bottom-right-radius:0;border-bottom-left-radius:0}.flatpickr-calendar .hasWeeks .dayContainer{border-left:0}.flatpickr-calendar.hasTime .flatpickr-time{height:40px;border-top:1px solid #e6e6e6}.flatpickr-calendar.noCalendar.hasTime .flatpickr-time{height:auto}.flatpickr-calendar:before,.flatpickr-calendar:after{position:absolute;display:block;pointer-events:none;border:solid transparent;content:'';height:0;width:0;left:22px}.flatpickr-calendar.rightMost:before,.flatpickr-calendar.arrowRight:before,.flatpickr-calendar.rightMost:after,.flatpickr-calendar.arrowRight:after{left:auto;right:22px}.flatpickr-calendar.arrowCenter:before,.flatpickr-calendar.arrowCenter:after{left:50%;right:50%}.flatpickr-calendar:before{border-width:5px;margin:0 -5px}.flatpickr-calendar:after{border-width:4px;margin:0 -4px}.flatpickr-calendar.arrowTop:before,.flatpickr-calendar.arrowTop:after{bottom:100%}.flatpickr-calendar.arrowTop:before{border-bottom-color:#e6e6e6}.flatpickr-calendar.arrowTop:after{border-bottom-color:#fff}.flatpickr-calendar.arrowBottom:before,.flatpickr-calendar.arrowBottom:after{top:100%}.flatpickr-calendar.arrowBottom:before{border-top-color:#e6e6e6}.flatpickr-calendar.arrowBottom:after{border-top-color:#fff}.flatpickr-calendar:focus{outline:0}.flatpickr-wrapper{position:relative;display:inline-block}.flatpickr-months{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex}.flatpickr-months .flatpickr-month{background:transparent;color:rgba(0,0,0,0.9);fill:rgba(0,0,0,0.9);height:34px;line-height:1;text-align:center;position:relative;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;overflow:hidden;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1}.flatpickr-months .flatpickr-prev-month,.flatpickr-months .flatpickr-next-month{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;text-decoration:none;cursor:pointer;position:absolute;top:0;height:34px;padding:10px;z-index:3;color:rgba(0,0,0,0.9);fill:rgba(0,0,0,0.9)}.flatpickr-months .flatpickr-prev-month.flatpickr-disabled,.flatpickr-months .flatpickr-next-month.flatpickr-disabled{display:none}.flatpickr-months .flatpickr-prev-month i,.flatpickr-months .flatpickr-next-month i{position:relative}.flatpickr-months .flatpickr-prev-month.flatpickr-prev-month,.flatpickr-months .flatpickr-next-month.flatpickr-prev-month{/*
+      /*rtl:begin:ignore*/left:0/*
+      /*rtl:end:ignore*/}/*
+      /*rtl:begin:ignore*/
+/*
+      /*rtl:end:ignore*/
+.flatpickr-months .flatpickr-prev-month.flatpickr-next-month,.flatpickr-months .flatpickr-next-month.flatpickr-next-month{/*
+      /*rtl:begin:ignore*/right:0/*
+      /*rtl:end:ignore*/}/*
+      /*rtl:begin:ignore*/
+/*
+      /*rtl:end:ignore*/
+.flatpickr-months .flatpickr-prev-month:hover,.flatpickr-months .flatpickr-next-month:hover{color:#959ea9}.flatpickr-months .flatpickr-prev-month:hover svg,.flatpickr-months .flatpickr-next-month:hover svg{fill:#f64747}.flatpickr-months .flatpickr-prev-month svg,.flatpickr-months .flatpickr-next-month svg{width:14px;height:14px}.flatpickr-months .flatpickr-prev-month svg path,.flatpickr-months .flatpickr-next-month svg path{-webkit-transition:fill .1s;transition:fill .1s;fill:inherit}.numInputWrapper{position:relative;height:auto}.numInputWrapper input,.numInputWrapper span{display:inline-block}.numInputWrapper input{width:100%}.numInputWrapper input::-ms-clear{display:none}.numInputWrapper input::-webkit-outer-spin-button,.numInputWrapper input::-webkit-inner-spin-button{margin:0;-webkit-appearance:none}.numInputWrapper span{position:absolute;right:0;width:14px;padding:0 4px 0 2px;height:50%;line-height:50%;opacity:0;cursor:pointer;border:1px solid rgba(57,57,57,0.15);-webkit-box-sizing:border-box;box-sizing:border-box}.numInputWrapper span:hover{background:rgba(0,0,0,0.1)}.numInputWrapper span:active{background:rgba(0,0,0,0.2)}.numInputWrapper span:after{display:block;content:"";position:absolute}.numInputWrapper span.arrowUp{top:0;border-bottom:0}.numInputWrapper span.arrowUp:after{border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:4px solid rgba(57,57,57,0.6);top:26%}.numInputWrapper span.arrowDown{top:50%}.numInputWrapper span.arrowDown:after{border-left:4px solid transparent;border-right:4px solid transparent;border-top:4px solid rgba(57,57,57,0.6);top:40%}.numInputWrapper span svg{width:inherit;height:auto}.numInputWrapper span svg path{fill:rgba(0,0,0,0.5)}.numInputWrapper:hover{background:rgba(0,0,0,0.05)}.numInputWrapper:hover span{opacity:1}.flatpickr-current-month{font-size:135%;line-height:inherit;font-weight:300;color:inherit;position:absolute;width:75%;left:12.5%;padding:7.48px 0 0 0;line-height:1;height:34px;display:inline-block;text-align:center;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}.flatpickr-current-month span.cur-month{font-family:inherit;font-weight:700;color:inherit;display:inline-block;margin-left:.5ch;padding:0}.flatpickr-current-month span.cur-month:hover{background:rgba(0,0,0,0.05)}.flatpickr-current-month .numInputWrapper{width:6ch;width:7ch\0;display:inline-block}.flatpickr-current-month .numInputWrapper span.arrowUp:after{border-bottom-color:rgba(0,0,0,0.9)}.flatpickr-current-month .numInputWrapper span.arrowDown:after{border-top-color:rgba(0,0,0,0.9)}.flatpickr-current-month input.cur-year{background:transparent;-webkit-box-sizing:border-box;box-sizing:border-box;color:inherit;cursor:text;padding:0 0 0 .5ch;margin:0;display:inline-block;font-size:inherit;font-family:inherit;font-weight:300;line-height:inherit;height:auto;border:0;border-radius:0;vertical-align:initial;-webkit-appearance:textfield;-moz-appearance:textfield;appearance:textfield}.flatpickr-current-month input.cur-year:focus{outline:0}.flatpickr-current-month input.cur-year[disabled],.flatpickr-current-month input.cur-year[disabled]:hover{font-size:100%;color:rgba(0,0,0,0.5);background:transparent;pointer-events:none}.flatpickr-current-month .flatpickr-monthDropdown-months{appearance:menulist;background:transparent;border:none;border-radius:0;box-sizing:border-box;color:inherit;cursor:pointer;font-size:inherit;font-family:inherit;font-weight:300;height:auto;line-height:inherit;margin:-1px 0 0 0;outline:none;padding:0 0 0 .5ch;position:relative;vertical-align:initial;-webkit-box-sizing:border-box;-webkit-appearance:menulist;-moz-appearance:menulist;width:auto}.flatpickr-current-month .flatpickr-monthDropdown-months:focus,.flatpickr-current-month .flatpickr-monthDropdown-months:active{outline:none}.flatpickr-current-month .flatpickr-monthDropdown-months:hover{background:rgba(0,0,0,0.05)}.flatpickr-current-month .flatpickr-monthDropdown-months .flatpickr-monthDropdown-month{background-color:transparent;outline:none;padding:0}.flatpickr-weekdays{background:transparent;text-align:center;overflow:hidden;width:100%;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:center;-webkit-align-items:center;-ms-flex-align:center;align-items:center;height:28px}.flatpickr-weekdays .flatpickr-weekdaycontainer{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1}span.flatpickr-weekday{cursor:default;font-size:90%;background:transparent;color:rgba(0,0,0,0.54);line-height:1;margin:0;text-align:center;display:block;-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;font-weight:bolder}.dayContainer,.flatpickr-weeks{padding:1px 0 0 0}.flatpickr-days{position:relative;overflow:hidden;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-align:start;-webkit-align-items:flex-start;-ms-flex-align:start;align-items:flex-start;width:307.875px}.flatpickr-days:focus{outline:0}.dayContainer{padding:0;outline:0;text-align:left;width:307.875px;min-width:307.875px;max-width:307.875px;-webkit-box-sizing:border-box;box-sizing:border-box;display:inline-block;display:-ms-flexbox;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-ms-flex-wrap:wrap;-ms-flex-pack:justify;-webkit-justify-content:space-around;justify-content:space-around;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0);opacity:1}.dayContainer + .dayContainer{-webkit-box-shadow:-1px 0 0 #e6e6e6;box-shadow:-1px 0 0 #e6e6e6}.flatpickr-day{background:none;border:1px solid transparent;border-radius:150px;-webkit-box-sizing:border-box;box-sizing:border-box;color:#393939;cursor:pointer;font-weight:400;width:14.2857143%;-webkit-flex-basis:14.2857143%;-ms-flex-preferred-size:14.2857143%;flex-basis:14.2857143%;max-width:39px;height:39px;line-height:39px;margin:0;display:inline-block;position:relative;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;text-align:center}.flatpickr-day.inRange,.flatpickr-day.prevMonthDay.inRange,.flatpickr-day.nextMonthDay.inRange,.flatpickr-day.today.inRange,.flatpickr-day.prevMonthDay.today.inRange,.flatpickr-day.nextMonthDay.today.inRange,.flatpickr-day:hover,.flatpickr-day.prevMonthDay:hover,.flatpickr-day.nextMonthDay:hover,.flatpickr-day:focus,.flatpickr-day.prevMonthDay:focus,.flatpickr-day.nextMonthDay:focus{cursor:pointer;outline:0;background:#e6e6e6;border-color:#e6e6e6}.flatpickr-day.today{border-color:#959ea9}.flatpickr-day.today:hover,.flatpickr-day.today:focus{border-color:#959ea9;background:#959ea9;color:#fff}.flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange,.flatpickr-day.selected.inRange,.flatpickr-day.startRange.inRange,.flatpickr-day.endRange.inRange,.flatpickr-day.selected:focus,.flatpickr-day.startRange:focus,.flatpickr-day.endRange:focus,.flatpickr-day.selected:hover,.flatpickr-day.startRange:hover,.flatpickr-day.endRange:hover,.flatpickr-day.selected.prevMonthDay,.flatpickr-day.startRange.prevMonthDay,.flatpickr-day.endRange.prevMonthDay,.flatpickr-day.selected.nextMonthDay,.flatpickr-day.startRange.nextMonthDay,.flatpickr-day.endRange.nextMonthDay{background:#569ff7;-webkit-box-shadow:none;box-shadow:none;color:#fff;border-color:#569ff7}.flatpickr-day.selected.startRange,.flatpickr-day.startRange.startRange,.flatpickr-day.endRange.startRange{border-radius:50px 0 0 50px}.flatpickr-day.selected.endRange,.flatpickr-day.startRange.endRange,.flatpickr-day.endRange.endRange{border-radius:0 50px 50px 0}.flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n+1)),.flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n+1)),.flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n+1)){-webkit-box-shadow:-10px 0 0 #569ff7;box-shadow:-10px 0 0 #569ff7}.flatpickr-day.selected.startRange.endRange,.flatpickr-day.startRange.startRange.endRange,.flatpickr-day.endRange.startRange.endRange{border-radius:50px}.flatpickr-day.inRange{border-radius:0;-webkit-box-shadow:-5px 0 0 #e6e6e6,5px 0 0 #e6e6e6;box-shadow:-5px 0 0 #e6e6e6,5px 0 0 #e6e6e6}.flatpickr-day.flatpickr-disabled,.flatpickr-day.flatpickr-disabled:hover,.flatpickr-day.prevMonthDay,.flatpickr-day.nextMonthDay,.flatpickr-day.notAllowed,.flatpickr-day.notAllowed.prevMonthDay,.flatpickr-day.notAllowed.nextMonthDay{color:rgba(57,57,57,0.3);background:transparent;border-color:transparent;cursor:default}.flatpickr-day.flatpickr-disabled,.flatpickr-day.flatpickr-disabled:hover{cursor:not-allowed;color:rgba(57,57,57,0.1)}.flatpickr-day.week.selected{border-radius:0;-webkit-box-shadow:-5px 0 0 #569ff7,5px 0 0 #569ff7;box-shadow:-5px 0 0 #569ff7,5px 0 0 #569ff7}.flatpickr-day.hidden{visibility:hidden}.rangeMode .flatpickr-day{margin-top:1px}.flatpickr-weekwrapper{float:left}.flatpickr-weekwrapper .flatpickr-weeks{padding:0 12px;-webkit-box-shadow:1px 0 0 #e6e6e6;box-shadow:1px 0 0 #e6e6e6}.flatpickr-weekwrapper .flatpickr-weekday{float:none;width:100%;line-height:28px}.flatpickr-weekwrapper span.flatpickr-day,.flatpickr-weekwrapper span.flatpickr-day:hover{display:block;width:100%;max-width:none;color:rgba(57,57,57,0.3);background:transparent;cursor:default;border:none}.flatpickr-innerContainer{display:block;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-sizing:border-box;box-sizing:border-box;overflow:hidden}.flatpickr-rContainer{display:inline-block;padding:0;-webkit-box-sizing:border-box;box-sizing:border-box}.flatpickr-time{text-align:center;outline:0;display:block;height:0;line-height:40px;max-height:40px;-webkit-box-sizing:border-box;box-sizing:border-box;overflow:hidden;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex}.flatpickr-time:after{content:"";display:table;clear:both}.flatpickr-time .numInputWrapper{-webkit-box-flex:1;-webkit-flex:1;-ms-flex:1;flex:1;width:40%;height:40px;float:left}.flatpickr-time .numInputWrapper span.arrowUp:after{border-bottom-color:#393939}.flatpickr-time .numInputWrapper span.arrowDown:after{border-top-color:#393939}.flatpickr-time.hasSeconds .numInputWrapper{width:26%}.flatpickr-time.time24hr .numInputWrapper{width:49%}.flatpickr-time input{background:transparent;-webkit-box-shadow:none;box-shadow:none;border:0;border-radius:0;text-align:center;margin:0;padding:0;height:inherit;line-height:inherit;color:#393939;font-size:14px;position:relative;-webkit-box-sizing:border-box;box-sizing:border-box;-webkit-appearance:textfield;-moz-appearance:textfield;appearance:textfield}.flatpickr-time input.flatpickr-hour{font-weight:bold}.flatpickr-time input.flatpickr-minute,.flatpickr-time input.flatpickr-second{font-weight:400}.flatpickr-time input:focus{outline:0;border:0}.flatpickr-time .flatpickr-time-separator,.flatpickr-time .flatpickr-am-pm{height:inherit;float:left;line-height:inherit;color:#393939;font-weight:bold;width:2%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-align-self:center;-ms-flex-item-align:center;align-self:center}.flatpickr-time .flatpickr-am-pm{outline:0;width:18%;cursor:pointer;text-align:center;font-weight:400}.flatpickr-time input:hover,.flatpickr-time .flatpickr-am-pm:hover,.flatpickr-time input:focus,.flatpickr-time .flatpickr-am-pm:focus{background:#eee}.flatpickr-input[readonly]{cursor:pointer}@-webkit-keyframes fpFadeInDown{from{opacity:0;-webkit-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}to{opacity:1;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}@keyframes fpFadeInDown{from{opacity:0;-webkit-transform:translate3d(0,-20px,0);transform:translate3d(0,-20px,0)}to{opacity:1;-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}}
+</style>
+<style>
+/* ── Pickers & dropdowns: CareCircle theme, neutral (non-green) backgrounds ── */
+.date-field { position: relative; }
+.date-field:after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23718096' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='3'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E");
+}
+.date-field-input { padding-right: 44px !important; cursor: pointer; }
+.tp-row { display: flex; gap: 8px; flex: 1; min-width: 0; }
+.tp-row .cs-trigger { padding: 11px 12px; }
+input.form-input[readonly] { cursor: pointer; }
+
+.flatpickr-calendar {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 28px rgba(30,45,74,0.18);
+  font-family: var(--font);
+}
+.flatpickr-calendar.arrowTop:after { border-bottom-color: var(--card); }
+.flatpickr-calendar.arrowBottom:after { border-top-color: var(--card); }
+
+/* Month header: light pill, one "Month Year" label, white circular arrow buttons */
+.flatpickr-months {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: fit-content;
+  box-sizing: border-box;
+  margin: 14px auto 2px;
+  padding: 4px 6px;
+  background: var(--sage-faint);
+  border-radius: 24px;
+}
+.flatpickr-months .flatpickr-month { position: static; height: auto; flex: 0 0 auto; overflow: visible; color: var(--navy); fill: var(--navy); }
+.flatpickr-current-month { position: static; width: auto; height: auto; padding: 0 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; line-height: 30px; }
+.flatpickr-current-month span.cur-month { margin: 0; padding: 0; color: var(--navy); font-weight: 700; }
+.flatpickr-current-month span.cur-month:hover { background: transparent; }
+.flatpickr-current-month .numInputWrapper { width: 4.3ch; margin: 0 0 0 0.3em; }
+.flatpickr-current-month input.cur-year { width: 100%; padding: 0; color: var(--navy); font-weight: 700; font-size: 15px; }
+/* year steppers only appear on hover, so at rest it reads as plain text */
+.flatpickr-current-month .numInputWrapper span { border: none; width: 14px; right: -14px; }
+.flatpickr-current-month .numInputWrapper span.arrowUp:after { border-bottom-color: var(--navy); }
+.flatpickr-current-month .numInputWrapper span.arrowDown:after { border-top-color: var(--navy); }
+.flatpickr-current-month .numInputWrapper span:hover { background: rgba(30,45,74,0.1); }
+.numInputWrapper:hover { background: transparent; }
+.flatpickr-time .numInputWrapper span { opacity: 1; border: none; width: 18px; }
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  position: static;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--card);
+  box-shadow: 0 1px 3px rgba(30,45,74,0.12);
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover { background: var(--card); color: var(--sage); box-shadow: 0 2px 6px rgba(30,45,74,0.2); }
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg,
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg { width: 14px; height: 14px; fill: none; stroke: currentColor; }
+
+span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
+.flatpickr-day { color: var(--text); border-radius: 10px; font-family: var(--font); }
+.flatpickr-day.inRange,
+.flatpickr-day:hover,
+.flatpickr-day:focus { background: var(--slate); border-color: var(--slate); color: var(--navy); }
+.flatpickr-day.today { border-color: var(--sage); }
+.flatpickr-day.today:hover,
+.flatpickr-day.today:focus { border-color: var(--sage); background: var(--sage); color: #fff; }
+.flatpickr-day.selected,
+.flatpickr-day.selected:hover,
+.flatpickr-day.selected:focus,
+.flatpickr-day.selected.prevMonthDay,
+.flatpickr-day.selected.nextMonthDay {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: #fff;
+  box-shadow: none;
+}
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay,
+.flatpickr-day.notAllowed { color: var(--text-muted); opacity: 0.45; }
+
+/* Time picker */
+.flatpickr-time input, .flatpickr-time .flatpickr-am-pm, .flatpickr-time .flatpickr-time-separator { color: var(--navy); font-family: var(--font); }
+.flatpickr-time input:hover, .flatpickr-time .flatpickr-am-pm:hover,
+.flatpickr-time input:focus, .flatpickr-time .flatpickr-am-pm:focus { background: var(--slate); }
+.flatpickr-time input::selection { background: var(--slate); color: var(--navy); }
+
+/* Custom dropdown (replaces every native <select>, including the open list):
+   white pill with sage border/text, white menu, gray highlight. */
+.cs-wrap { position: relative; min-width: 0; }
+.cs-native { display: none !important; }
+.cs-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--sage);
+  border-radius: 999px;
+  background: var(--card);
+  color: #0B0B0B;
+  font-family: var(--font);
+  font-size: var(--base);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+.cs-trigger:focus-visible,
+.cs-wrap.open .cs-trigger { outline: none; box-shadow: 0 0 0 3px rgba(74,124,111,0.22); }
+.cs-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cs-chev { flex-shrink: 0; width: 14px; height: 14px; }
+.cs-menu {
+  position: fixed;
+  z-index: 20000;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 6px;
+  box-shadow: 0 10px 28px rgba(30,45,74,0.2);
+  max-height: 260px;
+  overflow-y: auto;
+  font-family: var(--font);
+}
+.cs-item { padding: 10px 14px; border-radius: 10px; color: var(--text); font-size: 15px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.cs-item:hover, .cs-item.hi { background: var(--slate); }
+.cs-item.selected, .cs-item.selected:hover, .cs-item.selected.hi { background: var(--slate); color: #0B0B0B; font-weight: 800; }
+
+/* Type hierarchy: everything is regular weight, except titles (bold) and
+   subtitles (semi-bold, a bit lighter than titles, in the accent green). */
+*, *::before, *::after { font-weight: 400 !important; }
+.t-title, #header-title, .greeting h1, .auth-hero h1, .modal-title, .ob-step h2,
+.stat-num, .plan-card-name, .em-card-name, .em-section h3, .alert-banner-text h3,
+.pinned-banner h3, .med-card-name, .med-name, .appt-detail-title, .event-title,
+.shift-name, .feed-who, .comment-who, .ob-med-row-name, .senior-med-name { font-weight: 700 !important; }
+.t-sub, .greeting p, .auth-hero p, .ob-step .ob-sub, .section-label, .stat-label,
+.med-card-dose, .event-sub { font-weight: 600 !important; color: var(--sage) !important; }
+.med-name, .event-title, .shift-name, .appt-detail-title { color: var(--navy); }
+
+/* Blood type dropdown: red */
+#ob-blood ~ .cs-trigger { background: var(--red); border-color: var(--red); color: #fff; }
+#ob-blood ~ .cs-trigger:focus-visible,
+.cs-wrap.open #ob-blood ~ .cs-trigger { box-shadow: 0 0 0 3px rgba(192,57,43,0.3); }
+</style>
+</head>
+<body>
+
+<!-- Shown instead of the login form while we check for a saved session,
+     so returning users don't see a flash of the login screen first. -->
+<div id="busy-overlay" role="status" aria-live="polite"><div class="restore-spinner"></div><div id="busy-text">Working…</div></div>
+
+<div id="session-restore-screen">
+  <div class="restore-spinner"></div>
+</div>
+<script>
+(function () {
+  try {
+    var hasInviteLink = /[?&]invite=/.test(window.location.search);
+    if (hasInviteLink || localStorage.getItem('careCircleAuthToken')) {
+      document.getElementById('session-restore-screen').classList.add('show');
+    }
+  } catch (e) {}
+})();
+</script>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-hero">
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+    <h1>CareCircle</h1>
+    <p>Coordinate care for the people you love</p>
+  </div>
+
+  <div class="auth-tabs">
+    <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Log in</button>
+    <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Sign up</button>
+  </div>
+
+  <div class="auth-form" id="login-form">
+    <div class="auth-error" id="login-error"></div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password" />
+    </div>
+    <button class="btn btn-primary" onclick="submitLogin()">Log in</button>
+    <button type="button" class="forgot-password-link" onclick="openForgotPasswordModal()">Forgot password?</button>
+  </div>
+
+  <div class="auth-form hidden" id="signup-form">
+    <div class="auth-error" id="signup-error"></div>
+    <div class="form-group">
+      <label class="form-label">Your name</label>
+      <input class="form-input" type="text" id="signup-name" placeholder="e.g. Sarah Smith" autocomplete="name" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" type="password" id="signup-password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateSignupPasswordHint()" />
+      <div class="password-meter" id="signup-password-meter">
+        <div class="password-meter-seg" id="signup-password-seg-1"></div>
+        <div class="password-meter-seg" id="signup-password-seg-2"></div>
+        <div class="password-meter-seg" id="signup-password-seg-3"></div>
+      </div>
+      <div class="password-hint" id="signup-password-hint">&bull; At least 6 characters</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirm password</label>
+      <input class="form-input" type="password" id="signup-confirm" placeholder="Re-enter your password" autocomplete="new-password" />
+    </div>
+    <button class="btn btn-primary" onclick="submitSignup()">Join us</button>
+    <button type="button" class="forgot-password-link" onclick="openInviteCodeModal()">Have an invite code?</button>
+  </div>
+</div>
+
+<!-- JOIN FAMILY (shown when opened via an invite link) -->
+<div id="join-family-screen" style="display:none;">
+  <div class="auth-hero">
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    </div>
+    <h1>CareCircle</h1>
+    <p id="join-family-subtitle">You've been invited to join a family</p>
+  </div>
+
+  <div class="auth-form">
+    <div class="auth-error" id="join-error"></div>
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input class="form-input" type="text" id="join-name" disabled />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="join-email" disabled />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Create a password</label>
+      <input class="form-input" type="password" id="join-password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateJoinPasswordHint()" />
+      <div class="password-meter" id="join-password-meter">
+        <div class="password-meter-seg" id="join-password-seg-1"></div>
+        <div class="password-meter-seg" id="join-password-seg-2"></div>
+        <div class="password-meter-seg" id="join-password-seg-3"></div>
+      </div>
+      <div class="password-hint" id="join-password-hint">&bull; At least 6 characters</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirm password</label>
+      <input class="form-input" type="password" id="join-confirm" placeholder="Re-enter your password" autocomplete="new-password" />
+    </div>
+    <button class="btn btn-primary" id="join-submit-btn" onclick="submitJoinFamily()">Join family</button>
+  </div>
+</div>
+
+<!-- PLAN SELECTION (shown once, right after signup) -->
+<div id="plan-screen" style="display:none;flex-direction:column;position:fixed;inset:0;background:var(--surface);z-index:9998;max-width:480px;margin:0 auto;overflow:hidden;">
+  <div class="ob-header">
+    <div class="ob-header-label">Choose your plan</div>
+  </div>
+  <div style="padding:16px 20px 0;flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;">
+    <div class="plan-card selected" data-plan="free" onclick="selectPlan('free')">
+      <div class="plan-card-header">
+        <div class="plan-card-name">Free</div>
+        <div class="plan-card-price">$0/mo</div>
+      </div>
+      <div class="plan-card-desc">Medication tracking, appointments, and up to 2 family members.</div>
+    </div>
+    <div class="plan-card" data-plan="premium" onclick="selectPlan('premium')">
+      <div class="plan-card-header">
+        <div class="plan-card-name">Premium</div>
+        <div class="plan-card-price">$14/mo</div>
+      </div>
+      <div class="plan-card-desc">Unlimited family members, medication reminders, and priority support.</div>
+    </div>
+  </div>
+  <div class="ob-actions">
+    <button class="btn btn-primary" style="width:100%;" onclick="confirmPlanAndContinue()">Continue</button>
+  </div>
+</div>
+
+<!-- INVITE FAMILY MEMBERS (shown once, right after plan selection) -->
+<div id="invite-screen" style="display:none;flex-direction:column;position:fixed;inset:0;background:var(--surface);z-index:9998;max-width:480px;margin:0 auto;overflow:hidden;">
+  <div class="ob-header">
+    <div class="ob-header-label">Invite family members</div>
+  </div>
+  <div style="padding:16px 20px 0;flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;">
+    <div class="ob-sub" style="margin:0 0 16px;">Optional — you can invite people anytime from Settings.</div>
+    <div id="ob-invite-list"></div>
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input class="form-input" type="text" id="ob-invite-name" placeholder="e.g. John Smith" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" type="email" id="ob-invite-email" placeholder="e.g. john@example.com" />
+    </div>
+    <button class="btn btn-secondary" type="button" onclick="obAddInvite()">+ Invite</button>
+  </div>
+  <div class="ob-actions">
+    <button class="btn btn-primary" style="width:100%;" onclick="continueFromInviteScreen()">Continue</button>
+  </div>
+</div>
+
+<!-- ONBOARDING: EMERGENCY HEALTH SUMMARY -->
+<div id="onboarding-screen" style="display:none;">
+  <div class="ob-header">
+    <div class="ob-header-label">Set up emergency info</div>
+    <button class="ob-skip" id="ob-skip" onclick="skipOnboarding()">Skip</button>
+  </div>
+  <div class="ob-progress">
+    <div class="ob-dot active" id="ob-dot-1"></div>
+    <div class="ob-dot" id="ob-dot-2"></div>
+    <div class="ob-dot" id="ob-dot-3"></div>
+    <div class="ob-dot" id="ob-dot-4"></div>
+  </div>
+
+  <div class="ob-step active" id="ob-step-1">
+    <h2>Who are we caring for?</h2>
+    <div class="ob-sub">This builds a shareable card for paramedics and ER staff.</div>
+    <div class="form-group">
+      <label class="form-label">Full name</label>
+      <input class="form-input" type="text" id="ob-name" placeholder="e.g. Dorothy Smith" />
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Date of birth</label>
+        <div class="date-field"><input class="form-input" type="text" id="ob-dob" readonly placeholder="Select a date" /></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Blood type</label>
+        <select class="form-input" id="ob-blood">
+          <option value="">Unknown</option>
+          <option>O+</option><option>O-</option><option>A+</option><option>A-</option>
+          <option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Weight (optional)</label>
+      <div style="display:flex; gap:8px;">
+        <input class="form-input" type="number" min="1" step="0.1" id="ob-weight-value" placeholder="e.g. 148" style="flex:1;" />
+        <select class="form-input" id="ob-weight-unit" style="flex:0 0 90px;">
+          <option value="lbs">lbs</option>
+          <option value="kg">kg</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="ob-step" id="ob-step-2">
+    <h2>Current medications</h2>
+    <div class="ob-sub">Add what they're taking now. You can always add more later from the Meds tab.</div>
+    <div id="ob-med-list"></div>
+    <div class="form-group">
+      <label class="form-label">Medication name</label>
+      <input class="form-input" type="text" id="ob-med-name" placeholder="e.g. Metformin" />
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Dosage</label>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input class="form-input" type="number" min="0.1" step="0.1" id="ob-med-dose" placeholder="e.g. 500" style="flex:1;" />
+          <span style="font-size:15px;font-weight:600;color:var(--text-secondary);flex-shrink:0;">mg</span>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Reminder times</label>
+      <div id="ob-med-times-list"></div>
+      <button class="btn btn-secondary btn-sm" type="button" onclick="obAddMedTimeRow()" style="width:auto;">+ Add a time</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Take until (optional)</label>
+      <div class="date-field">
+        <input class="form-input" type="text" id="ob-med-end-date" readonly placeholder="Select a date" />
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">Leave blank for an ongoing medication</div>
+    </div>
+    <button class="btn btn-secondary" type="button" onclick="obAddMed()">+ Add</button>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">Tap "+ Add" for each one — filling the fields alone doesn't save it.</div>
+  </div>
+
+  <div class="ob-step" id="ob-step-3">
+    <h2>Medical details</h2>
+    <div class="ob-sub">The information paramedics ask for first.</div>
+    <div class="form-group">
+      <label class="form-label">Known allergies</label>
+      <input class="form-input" type="text" id="ob-allergies" placeholder="e.g. Penicillin, Sulfa drugs" />
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">Separate multiple allergies with commas</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Active conditions</label>
+      <input class="form-input" type="text" id="ob-conditions" placeholder="e.g. Hypertension, Type 2 Diabetes" />
+    </div>
+  </div>
+
+  <div class="ob-step" id="ob-step-4">
+    <h2>Emergency contacts</h2>
+    <div class="ob-sub">Who should be called first?</div>
+    <div class="form-group">
+      <label class="form-label">Contact 1 name</label>
+      <input class="form-input" type="text" id="ob-c1-name" placeholder="e.g. Sarah (daughter)" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone</label>
+      <div style="display:flex; gap:8px;">
+        <select class="form-input" id="ob-c1-code" style="flex:0 0 132px;">
+          <option value="+961" selected>🇱🇧 +961</option>
+          <option value="+971">🇦🇪 +971</option>
+          <option value="+966">🇸🇦 +966</option>
+          <option value="+962">🇯🇴 +962</option>
+          <option value="+20">🇪🇬 +20</option>
+          <option value="+963">🇸🇾 +963</option>
+          <option value="+964">🇮🇶 +964</option>
+          <option value="+965">🇰🇼 +965</option>
+          <option value="+974">🇶🇦 +974</option>
+          <option value="+973">🇧🇭 +973</option>
+          <option value="+968">🇴🇲 +968</option>
+          <option value="+970">🇵🇸 +970</option>
+          <option value="+90">🇹🇷 +90</option>
+          <option value="+357">🇨🇾 +357</option>
+          <option value="+1">🇺🇸 +1</option>
+          <option value="+44">🇬🇧 +44</option>
+          <option value="+33">🇫🇷 +33</option>
+          <option value="+49">🇩🇪 +49</option>
+          <option value="+61">🇦🇺 +61</option>
+          <option value="+91">🇮🇳 +91</option>
+        </select>
+        <input class="form-input" type="tel" id="ob-c1-phone" placeholder="70 123 456" style="flex:1;" />
+      </div>
+      <div class="input-error-msg" id="ob-c1-phone-error">Enter a valid phone number</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contact 2 (optional)</label>
+      <input class="form-input" type="text" id="ob-c2-name" placeholder="e.g. John (son)" />
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone</label>
+      <div style="display:flex; gap:8px;">
+        <select class="form-input" id="ob-c2-code" style="flex:0 0 132px;">
+          <option value="+961" selected>🇱🇧 +961</option>
+          <option value="+971">🇦🇪 +971</option>
+          <option value="+966">🇸🇦 +966</option>
+          <option value="+962">🇯🇴 +962</option>
+          <option value="+20">🇪🇬 +20</option>
+          <option value="+963">🇸🇾 +963</option>
+          <option value="+964">🇮🇶 +964</option>
+          <option value="+965">🇰🇼 +965</option>
+          <option value="+974">🇶🇦 +974</option>
+          <option value="+973">🇧🇭 +973</option>
+          <option value="+968">🇴🇲 +968</option>
+          <option value="+970">🇵🇸 +970</option>
+          <option value="+90">🇹🇷 +90</option>
+          <option value="+357">🇨🇾 +357</option>
+          <option value="+1">🇺🇸 +1</option>
+          <option value="+44">🇬🇧 +44</option>
+          <option value="+33">🇫🇷 +33</option>
+          <option value="+49">🇩🇪 +49</option>
+          <option value="+61">🇦🇺 +61</option>
+          <option value="+91">🇮🇳 +91</option>
+        </select>
+        <input class="form-input" type="tel" id="ob-c2-phone" placeholder="70 123 456" style="flex:1;" />
+      </div>
+      <div class="input-error-msg" id="ob-c2-phone-error">Enter a valid phone number</div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Insurance carrier (optional)</label>
+      <input class="form-input" type="text" id="ob-ins-carrier" placeholder="e.g. Blue Cross Blue Shield" />
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Policy #</label>
+        <input class="form-input" type="text" id="ob-ins-policy" placeholder="Optional" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Group #</label>
+        <input class="form-input" type="text" id="ob-ins-group" placeholder="Optional" />
+      </div>
+    </div>
+  </div>
+
+  <div class="ob-actions">
+    <button class="btn btn-secondary" id="ob-back-btn" style="display:none;" onclick="obPrev()">Back</button>
+    <button class="btn btn-primary" id="ob-next-btn" onclick="obNext()">Continue</button>
+  </div>
+</div>
+
+<div id="app" style="display:none;">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div id="header-title">CareCircle</div>
+    <span id="header-badge">Smith Family</span>
+    <button id="header-action" onclick="openSettings()" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+
+  <!-- SCREENS -->
+  <div id="screens">
+
+    <!-- HOME -->
+    <div class="screen active" id="screen-home">
+      <div class="greeting">
+        <h1 id="greeting-text">Good morning, Sarah</h1>
+        <p>Tuesday, Sept 2 &bull; Mom's care overview</p>
+      </div>
+
+      <div class="alert-banner" id="home-alert-banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="alert-banner-text">
+          <h3>Lisinopril not confirmed</h3>
+          <p>Mom's 8:00 AM dose was due 2 hours ago.</p>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card" onclick="goTo('meds')">
+          <div class="stat-num" id="stat-med-count">4</div>
+          <div class="stat-label">Medications</div>
+          <div class="stat-sub" id="stat-med-sub"><span class="stat-dot" style="background:var(--success)"></span>3 confirmed today</div>
+        </div>
+        <div class="stat-card" onclick="goTo('calendar')">
+          <div class="stat-num" id="stat-appt-count">2</div>
+          <div class="stat-label">This week</div>
+          <div class="stat-sub" id="stat-appt-sub"><span class="stat-dot" style="background:var(--sage)"></span>Cardiology Thursday</div>
+        </div>
+      </div>
+
+      <div class="section-label">Today's medications</div>
+      <div class="card" id="home-meds-card"></div>
+
+      <div class="section-label">Coverage this week</div>
+      <div class="card">
+        <div id="home-coverage-content"></div>
+        <button class="btn btn-secondary btn-sm" style="margin-top:14px;" onclick="openCoverageModal()">Shifts</button>
+      </div>
+
+      <div class="section-label">Next appointment</div>
+      <div class="card">
+        <div id="home-next-appt" style="display:flex; justify-content:space-between; align-items:flex-start;"></div>
+      </div>
+    </div>
+
+    <!-- MEDICATIONS -->
+    <div class="screen" id="screen-meds">
+      <div style="padding:16px 16px 4px;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div class="t-title" style="font-size:22px;color:var(--navy);">Medications</div>
+          <div class="t-sub" style="font-size:14px;margin-top:3px;" id="meds-subtitle">Dorothy Smith &bull; 4 active</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:13px;color:var(--text-muted);">Today's adherence</div>
+          <div class="t-title" style="font-size:22px;color:var(--success);" id="meds-adherence">75%</div>
+        </div>
+      </div>
+
+      <div id="meds-dynamic">
+      </div><!-- /meds-dynamic -->
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="screen" id="screen-calendar">
+      <div class="mini-cal">
+        <div class="cal-nav">
+          <button class="cal-btn" aria-label="Previous month" onclick="changeMonth(-1)">&#8249;</button>
+          <div class="cal-month" id="cal-month-label">September 2026</div>
+          <button class="cal-btn" aria-label="Next month" onclick="changeMonth(1)">&#8250;</button>
+        </div>
+        <div class="cal-grid" id="cal-grid">
+          <div class="cal-dow">S</div><div class="cal-dow">M</div><div class="cal-dow">T</div>
+          <div class="cal-dow">W</div><div class="cal-dow">T</div><div class="cal-dow">F</div><div class="cal-dow">S</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:20px 16px 10px;">
+        <div class="section-label" style="margin:0;">Caregiver coverage</div>
+        <button onclick="openCoverageModal()" style="background:none;border:none;color:var(--sage);font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);padding:6px 4px;min-height:36px;">Edit</button>
+      </div>
+      <div class="shift-row" id="calendar-coverage-row"></div>
+
+      <div class="section-label">Upcoming appointments</div>
+      <div class="card" id="events-list"></div>
+      <div style="height:16px;"></div>
+    </div>
+
+    <!-- FAMILY FEED -->
+    <div class="screen" id="screen-feed">
+      <div style="padding:16px 16px 4px;">
+        <div class="t-title" style="font-size:22px;color:var(--navy);">Family Feed</div>
+        <div class="t-sub" style="font-size:14px;margin-top:3px;" id="feed-family-subtitle"></div>
+      </div>
+
+      <div id="feed-list"></div>
+      <div style="height:80px;"></div>
+    </div>
+
+    <!-- EMERGENCY CARD -->
+    <div class="screen" id="screen-emergency">
+      <div style="padding:16px 16px 4px;">
+        <div class="t-title" style="font-size:22px;color:var(--navy);">Emergency Card</div>
+        <div class="t-sub" style="font-size:14px;margin-top:3px;">Share instantly with first responders</div>
+      </div>
+
+      <div class="em-card">
+        <div class="em-card-label">Emergency Health Summary</div>
+        <div class="em-card-name" id="em-name">Loading…</div>
+        <div class="em-card-dob" id="em-dob"></div>
+        <hr class="em-card-divider">
+        <div class="em-card-row">
+          <div class="em-card-field">
+            <div class="em-card-field-label">Blood type</div>
+            <div class="em-card-field-value" id="em-blood">—</div>
+          </div>
+          <div class="em-card-field" style="text-align:right;">
+            <div class="em-card-field-label">Weight</div>
+            <div class="em-card-field-value" id="em-weight">—</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div class="em-card-field-label" style="opacity:0.6;">Known allergies</div>
+          <div style="margin-top:6px;" id="em-allergies"></div>
+        </div>
+        <hr class="em-card-divider">
+        <div class="em-card-field-label" style="opacity:0.6;margin-bottom:6px;">Active conditions</div>
+        <div style="font-size:14px;opacity:0.88;line-height:1.6;" id="em-conditions"></div>
+      </div>
+
+      <button class="share-btn" onclick="showToast('Sharing link copied — expires in 24h')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share emergency card
+      </button>
+
+      <div class="em-section">
+        <h3>Current medications</h3>
+        <div id="em-current-meds"></div>
+      </div>
+
+      <div class="em-section">
+        <h3>Emergency contacts</h3>
+        <div id="em-contacts"></div>
+      </div>
+
+      <div class="em-section">
+        <h3>Insurance</h3>
+        <div class="em-row"><span class="em-row-label">Carrier</span><span class="em-row-value" id="em-ins-carrier">—</span></div>
+        <div class="em-row"><span class="em-row-label">Policy #</span><span class="em-row-value" id="em-ins-policy">—</span></div>
+        <div class="em-row"><span class="em-row-label">Group #</span><span class="em-row-value" id="em-ins-group">—</span></div>
+      </div>
+
+      <div style="margin:0 16px 20px;font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;">
+        This is a family-managed summary for emergency reference only.<br>Not a clinical medical record. Last updated Sep 2, 2026.
+      </div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- TABBAR -->
+  <div id="tabbar" role="tablist">
+    <button class="tab active" role="tab" aria-selected="true" aria-label="Home" onclick="goTo('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-label="Medications" onclick="goTo('meds')">
+      <div class="tab-dot show"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.5 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v2"/><circle cx="16" cy="19" r="4"/><path d="M16 17v4"/><path d="M14 19h4"/></svg>
+      <span class="tab-label">Meds</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-label="Calendar" onclick="goTo('calendar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="tab-label">Calendar</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-label="Family Feed" onclick="goTo('feed')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="tab-label">Feed</span>
+    </button>
+    <button class="tab" role="tab" aria-selected="false" aria-label="Emergency Card" onclick="goTo('emergency')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span class="tab-label">Card</span>
+    </button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- FAB -->
+<button class="fab" id="fab" onclick="openFab()" aria-label="Add new" style="display:none;">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</button>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- Hover preview for calendar days with appointments -->
+<div id="cal-day-popover" class="cal-day-popover"></div>
+
+<!-- MODAL: Appointment Detail Dialog (opened by tapping a calendar day) -->
+<div class="modal-overlay" id="appt-detail-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="appt-detail-title">Appointments</div>
+      <button class="modal-close" onclick="closeApptDetailModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body" id="appt-detail-body"></div>
+  </div>
+</div>
+
+<!-- MODAL: Invite Family Member (from Settings, after onboarding) -->
+<div class="modal-overlay" id="invite-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Invite family member</div>
+      <button class="modal-close" onclick="closeInviteModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input class="form-input" type="text" id="invite-name-input" placeholder="e.g. John Smith" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input class="form-input" type="email" id="invite-email-input" placeholder="e.g. john@example.com" />
+      </div>
+      <button class="btn btn-primary" onclick="submitInvite()">Invite</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeInviteModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit Caregiver Coverage -->
+<div class="modal-overlay" id="coverage-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Edit coverage</div>
+      <button class="modal-close" onclick="closeCoverageModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div id="coverage-modal-body"></div>
+      <button class="btn btn-primary" onclick="submitCoverage()">Save</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeCoverageModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Post / Comment -->
+<div class="modal-overlay" id="post-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">New post</div>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Tag</label>
+        <select class="form-input" id="post-tag">
+          <option>General update</option>
+          <option>Medication</option>
+          <option>Appointment</option>
+          <option>Need help</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea class="form-input" id="post-text" rows="4" placeholder="What's the update?" style="resize:none;line-height:1.5;"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="submitPost()">Post</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Medication -->
+<div class="modal-overlay" id="med-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Add medication</div>
+      <button class="modal-close" onclick="closeMedModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Medication name</label>
+        <input id="med-name-input" class="form-input" type="text" placeholder="e.g. Metformin" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Dosage</label>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <input id="med-dose-input" class="form-input" type="number" min="0.1" step="0.1" placeholder="e.g. 500" style="flex:1;" />
+          <span style="font-size:15px;font-weight:600;color:var(--text-secondary);flex-shrink:0;">mg</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reminder times</label>
+        <div id="med-times-list"></div>
+        <button class="btn btn-secondary btn-sm" type="button" onclick="addMedTimeRow()" style="width:auto;">+ Add a time</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Take until (optional)</label>
+        <div class="date-field">
+          <input id="med-end-date-input" class="form-input" type="text" readonly placeholder="Select a date" />
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">Leave blank for an ongoing medication</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reason / condition</label>
+        <input id="med-reason-input" class="form-input" type="text" placeholder="e.g. Type 2 diabetes" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pharmacy</label>
+        <input id="med-pharmacy-input" class="form-input" type="text" placeholder="e.g. CVS Pharmacy" />
+      </div>
+      <button class="btn btn-primary" id="med-submit-btn" onclick="submitMed()">Add</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeMedModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Appointment -->
+<div class="modal-overlay" id="appt-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Add appointment</div>
+      <button class="modal-close" onclick="closeApptModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input id="appt-title-input" class="form-input" type="text" placeholder="e.g. Cardiology Check-up" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date</label>
+        <div class="date-field"><input id="appt-date-input" class="form-input" type="text" readonly placeholder="Select a date" /></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Time</label>
+        <input id="appt-time-input" type="hidden" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Provider / location</label>
+        <input id="appt-provider-input" class="form-input" type="text" placeholder="e.g. Dr. Mansour, AUH Medical" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <input id="appt-notes-input" class="form-input" type="text" placeholder="e.g. Bring insurance card" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Who's taking her?</label>
+        <select id="appt-who-input" class="form-input">
+          <option>Sarah</option>
+          <option>John</option>
+          <option>Nurse Linda</option>
+          <option>TBD</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="submitAppt()">Add</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeApptModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Forgot password -->
+<div class="modal-overlay" id="forgot-password-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Reset password</div>
+      <button class="modal-close" onclick="closeForgotPasswordModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-error" id="fp-error"></div>
+
+      <div id="fp-stage-request">
+        <div style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5;">Enter your email and we'll send you a 6-digit code to reset your password.</div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" id="fp-email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+        <button class="btn btn-primary" id="fp-request-btn" onclick="submitForgotPasswordRequest()">Send code</button>
+      </div>
+
+      <div id="fp-stage-reset" style="display:none;">
+        <div style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5;">Check your email for the code, then set a new password.</div>
+        <div class="form-group">
+          <label class="form-label">6-digit code</label>
+          <input class="form-input" type="text" inputmode="numeric" maxlength="6" id="fp-code" placeholder="123456" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">New password</label>
+          <input class="form-input" type="password" id="fp-new-password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateForgotPasswordHint()" />
+          <div class="password-meter" id="fp-password-meter">
+            <div class="password-meter-seg" id="fp-password-seg-1"></div>
+            <div class="password-meter-seg" id="fp-password-seg-2"></div>
+            <div class="password-meter-seg" id="fp-password-seg-3"></div>
+          </div>
+          <div class="password-hint" id="fp-password-hint">&bull; At least 6 characters</div>
+        </div>
+        <button class="btn btn-primary" id="fp-reset-btn" onclick="submitPasswordReset()">Reset password</button>
+        <button class="btn btn-secondary" style="margin-top:10px;" type="button" onclick="showForgotPasswordStage('request')">Didn't get a code? Try again</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Enter invite code -->
+<div class="modal-overlay" id="invite-code-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Join a family</div>
+      <button class="modal-close" onclick="closeInviteCodeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-error" id="invite-code-error"></div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5;">Paste the invite code from your email below.</div>
+      <div class="form-group">
+        <label class="form-label">Invite code</label>
+        <input class="form-input" type="text" id="invite-code-input" placeholder="Paste your code here" autocomplete="off" />
+      </div>
+      <button class="btn btn-primary" id="invite-code-submit-btn" onclick="submitInviteCode()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Settings</div>
+      <button class="modal-close" onclick="closeSettings()">&#x2715;</button>
+    </div>
+    <div class="modal-body" style="padding:0 0 20px;">
+      <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Your account</div>
+      <div class="settings-row" style="cursor:default;">
+        <div><div class="settings-label" id="settings-account-name">Sarah Johnson</div><div class="settings-sub" id="settings-account-email">sarah@example.com</div></div>
+        <span class="role-badge" id="settings-account-role">Primary caregiver</span>
+      </div>
+      <div class="settings-row" style="cursor:default;">
+        <div><div class="settings-label" id="settings-family-name">Smith Family</div><div class="settings-sub" id="settings-plan-members">Premium plan — 3 members</div></div>
+      </div>
+      <div id="settings-member-list"></div>
+      <div class="settings-row" onclick="editHealthSummary()">
+        <div><div class="settings-label">Edit health summary</div><div class="settings-sub">Update allergies, contacts, insurance</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Accessibility</div>
+      <div class="settings-row" onclick="toggleLargeText()">
+        <div><div class="settings-label">Large text</div><div class="settings-sub">Increase font size throughout</div></div>
+        <button class="toggle" id="large-text-toggle" aria-label="Toggle large text"></button>
+      </div>
+      <div class="settings-row" onclick="toggleHighContrast()">
+        <div><div class="settings-label">High contrast</div><div class="settings-sub">Increase text and border contrast</div></div>
+        <button class="toggle" id="high-contrast-toggle" aria-label="Toggle high contrast"></button>
+      </div>
+
+      <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Reminders</div>
+      <div class="settings-row" onclick="toggleMedReminders()">
+        <div><div class="settings-label">Medication reminders</div><div class="settings-sub">Notify 10 min before and when a dose is due — only while this app is open in a browser tab</div></div>
+        <button class="toggle" id="reminders-toggle" aria-label="Toggle medication reminders"></button>
+      </div>
+      <div class="settings-row" style="cursor:default;flex-direction:column;align-items:stretch;">
+        <div class="settings-label" style="margin-bottom:8px;">Region / timezone</div>
+        <select class="form-input" id="timezone-select" onchange="setTimezone(this.value)"></select>
+      </div>
+
+      <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">View</div>
+      <div class="settings-row" onclick="switchToSeniorMode()">
+        <div><div class="settings-label">Senior mode</div><div class="settings-sub">Simple view — reminders only</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="settings-row" onclick="openInviteModal()">
+        <div><div class="settings-label">Invite family member</div><div class="settings-sub">Add sibling or caregiver</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Privacy</div>
+      <div class="settings-row" style="cursor:default;">
+        <div><div class="settings-label">Data stored encrypted</div><div class="settings-sub">We never sell your family's data</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+
+      <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Account</div>
+      <div class="settings-row" onclick="logOut()">
+        <div><div class="settings-label" style="color:var(--red);">Log out</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SENIOR MODE OVERLAY -->
+<div id="senior-overlay" style="display:none;position:fixed;inset:0;background:var(--surface);z-index:300;overflow-y:auto;">
+  <div style="background:var(--navy);padding:20px 20px 16px;display:flex;align-items:center;justify-content:space-between;">
+    <div class="t-title" style="color:white;font-size:20px;">Your medications</div>
+    <button onclick="closeSeniorMode()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:50%;width:44px;height:44px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
+  </div>
+  <div style="padding:16px;">
+    <div style="background:var(--card);border-radius:20px;padding:24px;margin-bottom:14px;box-shadow:var(--shadow);">
+      <div class="t-sub" style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">8:00 AM</div>
+      <div class="t-title" style="font-size:28px;color:var(--navy);margin-bottom:4px;">Lisinopril</div>
+      <div style="font-size:20px;color:var(--text-secondary);margin-bottom:20px;">10 mg — one tablet</div>
+      <button onclick="seniorConfirm(this)" style="width:100%;min-height:72px;background:var(--sage);color:white;border:none;border-radius:18px;font-size:22px;font-weight:800;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:12px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        I took it
+      </button>
+    </div>
+    <div style="background:var(--card);border-radius:20px;padding:24px;margin-bottom:14px;box-shadow:var(--shadow);">
+      <div class="t-sub" style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">8:00 AM</div>
+      <div class="t-title" style="font-size:28px;color:var(--navy);margin-bottom:4px;">Metformin</div>
+      <div style="font-size:20px;color:var(--text-secondary);margin-bottom:20px;">500 mg — one tablet</div>
+      <button style="width:100%;min-height:72px;background:var(--success);color:white;border:none;border-radius:18px;font-size:22px;font-weight:800;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:12px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirmed ✓
+      </button>
+    </div>
+    <div style="background:var(--card);border-radius:20px;padding:24px;box-shadow:var(--shadow);">
+      <div class="t-sub" style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">1:00 PM</div>
+      <div class="t-title" style="font-size:28px;color:var(--navy);margin-bottom:4px;">Aspirin</div>
+      <div style="font-size:20px;color:var(--text-secondary);margin-bottom:20px;">81 mg — one tablet</div>
+      <button disabled style="width:100%;min-height:72px;background:var(--slate);color:var(--text-muted);border:none;border-radius:18px;font-size:22px;font-weight:800;cursor:default;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:12px;">
+        Not yet — 1:00 PM
+      </button>
+    </div>
+    <div style="margin-top:16px;text-align:center;font-size:14px;color:var(--text-muted);line-height:1.6;" id="senior-contact-footer">
+      If you have a question, call Sarah<br>
+      <a href="tel:555-0181" style="color:var(--sage);font-size:20px;font-weight:800;text-decoration:none;display:block;margin-top:8px;">555-0181</a>
+    </div>
+  </div>
+</div>
+
+<script src="flatpickr.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
