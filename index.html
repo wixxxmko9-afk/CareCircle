@@ -1434,7 +1434,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
 
       <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Privacy</div>
       <div class="settings-row" style="cursor:default;">
-        <div><div class="settings-label">Data stored encrypted</div><div class="settings-sub">We never sell your family's data</div></div>
+        <div><div class="settings-label">Protected by your login</div><div class="settings-sub">Only people in your family can open this. We never sell your data.</div></div>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
 
@@ -1537,6 +1537,12 @@ async function callApi(action, data) {
     throw new Error(json.error || 'Request failed');
   }
   return json.data;
+}
+
+/* Escapes user-supplied text before it goes into innerHTML templates, so a
+   name or note like <img onerror=…> is shown as plain text, never run. */
+function esc(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 /* Full-screen "working…" overlay + in-flight guard, so slow server calls
@@ -1766,10 +1772,10 @@ function renderObInviteList() {
   box.innerHTML = pendingInviteDrafts.map((m, i) => `
     <div class="ob-med-row">
       <div>
-        <div class="ob-med-row-name">${m.name}</div>
-        <div class="ob-med-row-sub">${m.email} &bull; Not yet sent</div>
+        <div class="ob-med-row-name">${esc(m.name)}</div>
+        <div class="ob-med-row-sub">${esc(m.email)} &bull; Not yet sent</div>
       </div>
-      <button class="ob-med-remove" onclick="obRemoveInvite(${i})" aria-label="Remove ${m.name}">&#x2715;</button>
+      <button class="ob-med-remove" onclick="obRemoveInvite(${i})" aria-label="Remove ${esc(m.name)}">&#x2715;</button>
     </div>`).join('');
 }
 async function continueFromInviteScreen() {
@@ -1826,12 +1832,12 @@ function renderSettingsFamilyInfo() {
     planLabel + ' plan — ' + total + (total === 1 ? ' member' : ' members');
   const joinedRows = familyMembers.filter(m => m.id !== currentUser.id).map(m => `
     <div class="settings-row" style="cursor:default;">
-      <div><div class="settings-label">${m.fullName}</div><div class="settings-sub">${m.email}</div></div>
+      <div><div class="settings-label">${esc(m.fullName)}</div><div class="settings-sub">${esc(m.email)}</div></div>
       <span class="role-badge">${roleLabel(m.role)}</span>
     </div>`).join('');
   const invitedRows = pendingInvites.map(m => `
     <div class="settings-row" style="cursor:default;">
-      <div><div class="settings-label">${m.name}</div><div class="settings-sub">${m.email}</div></div>
+      <div><div class="settings-label">${esc(m.name)}</div><div class="settings-sub">${esc(m.email)}</div></div>
       <span class="pill pill-amber">Invited</span>
     </div>`).join('');
   document.getElementById('settings-member-list').innerHTML = joinedRows + invitedRows;
@@ -1885,9 +1891,9 @@ function renderHomeCoverageCard() {
     const initial = g.person.charAt(0).toUpperCase();
     return `
       <div class="shift-item">
-        <div class="shift-avatar" style="background:${colorForPerson(g.person)}">${initial}</div>
+        <div class="shift-avatar" style="background:${colorForPerson(g.person)}">${esc(initial)}</div>
         <div class="shift-info">
-          <div class="shift-name">${g.person}${isYou ? ' (you)' : ''}</div>
+          <div class="shift-name">${esc(g.person)}${isYou ? ' (you)' : ''}</div>
           <div class="shift-days">${g.days.join(', ')}</div>
         </div>
         ${isYou ? '<span class="pill pill-slate">Active</span>' : ''}
@@ -1915,8 +1921,8 @@ function renderCalendarCoverageRow() {
     return `
       <div class="shift-chip">
         <div class="shift-chip-day">${d}</div>
-        <div class="shift-chip-avatar" style="background:${colorForPerson(person)}">${initial}</div>
-        <div class="shift-chip-who">${person}</div>
+        <div class="shift-chip-avatar" style="background:${colorForPerson(person)}">${esc(initial)}</div>
+        <div class="shift-chip-who">${esc(person)}</div>
       </div>`;
   }).join('');
 }
@@ -1931,7 +1937,7 @@ function openCoverageModal() {
   document.getElementById('coverage-modal-body').innerHTML = CAREGIVER_DAYS.map(d => {
     const current = caregiverShifts[d];
     const options = people.map(p =>
-      `<option value="${p}" ${p === current ? 'selected' : ''}>${p}${p === currentUser.firstName ? ' (you)' : ''}</option>`
+      `<option value="${esc(p)}" ${p === current ? 'selected' : ''}>${esc(p)}${p === currentUser.firstName ? ' (you)' : ''}</option>`
     ).join('') + `<option value="" ${!current ? 'selected' : ''}>No one assigned</option>`;
     return `
       <div class="form-group">
@@ -2079,10 +2085,10 @@ function renderObMedList() {
   box.innerHTML = obMeds.map((m, i) => `
     <div class="ob-med-row">
       <div>
-        <div class="ob-med-row-name">${m.name} — ${m.doseValueMg}mg</div>
-        <div class="ob-med-row-sub">${m.times.join(', ')}${m.endDate ? ' &bull; until ' + m.endDate : ''}</div>
+        <div class="ob-med-row-name">${esc(m.name)} — ${esc(m.doseValueMg)}mg</div>
+        <div class="ob-med-row-sub">${esc(m.times.join(', '))}${m.endDate ? ' &bull; until ' + esc(m.endDate) : ''}</div>
       </div>
-      <button class="ob-med-remove" onclick="obRemoveMed(${i})" aria-label="Remove ${m.name}">&#x2715;</button>
+      <button class="ob-med-remove" onclick="obRemoveMed(${i})" aria-label="Remove ${esc(m.name)}">&#x2715;</button>
     </div>`).join('');
 }
 
@@ -2370,14 +2376,14 @@ function renderEmergencyCard() {
   const allergyBox = document.getElementById('em-allergies');
   const allergyList = (s && s.allergies) ? s.allergies.split(',').map(a => a.trim()).filter(Boolean) : [];
   allergyBox.innerHTML = allergyList.length
-    ? allergyList.map(a => `<span class="em-allergy-chip">${a}</span>`).join('')
+    ? allergyList.map(a => `<span class="em-allergy-chip">${esc(a)}</span>`).join('')
     : '<span style="font-size:14px;opacity:0.7;">None recorded</span>';
 
   document.getElementById('em-conditions').textContent = (s && s.conditions) || 'None recorded';
 
   const contactsBox = document.getElementById('em-contacts');
   contactsBox.innerHTML = emergencyContacts.length
-    ? emergencyContacts.map(c => `<div class="em-row"><span class="em-row-label">${c.name}</span><span class="em-row-value" style="color:var(--sage);">${c.countryCode} ${c.phone}</span></div>`).join('')
+    ? emergencyContacts.map(c => `<div class="em-row"><span class="em-row-label">${esc(c.name)}</span><span class="em-row-value" style="color:var(--sage);">${esc(c.countryCode)} ${esc(c.phone)}</span></div>`).join('')
     : '<div class="em-row"><span class="em-row-label">No contacts added yet</span></div>';
 
   document.getElementById('em-ins-carrier').textContent = (s && s.insuranceCarrier) || '—';
@@ -2503,23 +2509,23 @@ function medEndDateLabel(m) {
   return isMedExpired(m) ? 'Course ended ' + label : 'Until ' + label;
 }
 function medCardHTML(m) {
-  const chips = m.times.map(t => `<span class="time-chip">${t}</span>`).join('');
+  const chips = m.times.map(t => `<span class="time-chip">${esc(t)}</span>`).join('');
   const firstTime = m.times[0];
   const done = isConfirmedToday(m.id, firstTime);
   return `
-    <div class="med-card" id="med-${m.id}">
+    <div class="med-card" id="med-${esc(m.id)}">
       <div class="med-card-header">
         <div class="med-card-icon">💊</div>
         <div class="med-card-info">
-          <div class="med-card-name">${m.name}</div>
-          <div class="med-card-dose">${m.dose}${m.reason ? ' &bull; ' + m.reason : ''}</div>
-          <div class="med-card-reason">${m.pharmacy || 'Pharmacy not set'}</div>
-          ${m.endDate ? `<div class="med-card-reason" style="color:${isMedExpired(m) ? 'var(--red)' : 'var(--amber)'};font-weight:600;">${medEndDateLabel(m)}</div>` : ''}
+          <div class="med-card-name">${esc(m.name)}</div>
+          <div class="med-card-dose">${esc(m.dose)}${m.reason ? ' &bull; ' + esc(m.reason) : ''}</div>
+          <div class="med-card-reason">${esc(m.pharmacy) || 'Pharmacy not set'}</div>
+          ${m.endDate ? `<div class="med-card-reason" style="color:${isMedExpired(m) ? 'var(--red)' : 'var(--amber)'};font-weight:600;">${esc(medEndDateLabel(m))}</div>` : ''}
         </div>
       </div>
       <div class="med-card-footer">
         <div class="med-times">${chips}</div>
-        <button class="take-btn${done ? ' done' : ''}" ${done ? 'disabled' : ''} onclick="confirmMed('${m.id}', '${firstTime}', this)">
+        <button class="take-btn${done ? ' done' : ''}" ${done ? 'disabled' : ''} data-id="${esc(m.id)}" data-slot="${esc(firstTime)}" onclick="confirmMedBtn(this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           ${done ? 'Confirmed' : 'Taken'}
         </button>
@@ -2569,11 +2575,11 @@ function renderHomeMeds() {
     <div class="med-item">
       <div class="med-icon med-icon-sage">💊</div>
       <div class="med-info">
-        <div class="med-name">${m.name} ${m.dose}</div>
-        <div class="med-dose">${m.reason || 'Scheduled'}</div>
+        <div class="med-name">${esc(m.name)} ${esc(m.dose)}</div>
+        <div class="med-dose">${esc(m.reason) || 'Scheduled'}</div>
       </div>
       <div>
-        <span class="pill pill-amber"><span class="pill-dot"></span>Due ${m.times[0]}</span>
+        <span class="pill pill-amber"><span class="pill-dot"></span>Due ${esc(m.times[0])}</span>
       </div>
     </div>`).join('');
 }
@@ -2585,10 +2591,11 @@ function renderEmergencyMeds() {
     return;
   }
   box.innerHTML = medications.map(m =>
-    `<div class="em-row"><span class="em-row-label">${m.name}</span><span class="em-row-value">${m.dose} — ${m.times.length > 1 ? m.times.length + 'x daily' : 'once daily'}</span></div>`
+    `<div class="em-row"><span class="em-row-label">${esc(m.name)}</span><span class="em-row-value">${esc(m.dose)} — ${m.times.length > 1 ? m.times.length + 'x daily' : 'once daily'}</span></div>`
   ).join('');
 }
 
+function confirmMedBtn(btn) { return confirmMed(btn.dataset.id, btn.dataset.slot, btn); }
 async function confirmMed(id, timeSlot, btn) {
   try {
     const confirmation = await callApi('confirmMedication', { id, timeSlot });
@@ -2623,17 +2630,17 @@ function apptFromApi(a) {
 
 function eventItemHTML(a) {
   return `
-    <div class="event-item" id="row-${a.id}">
+    <div class="event-item" id="row-${esc(a.id)}">
       <div class="event-time-col">
-        <div class="event-time">${a.time}</div>
-        <div class="event-date-s">${a.dateLabel}</div>
+        <div class="event-time">${esc(a.time)}</div>
+        <div class="event-date-s">${esc(a.dateLabel)}</div>
       </div>
       <div class="event-bar event-bar-sage"></div>
       <div class="event-body">
-        <div class="event-title">${a.title}</div>
-        <div class="event-sub">${[a.provider, a.location].filter(Boolean).join(' &bull; ')}</div>
-        ${a.notes ? `<div class="event-note">${a.notes}</div>` : ''}
-        <button class="btn btn-danger btn-sm" style="margin-top:10px;width:auto;" onclick="cancelAppointment('${a.id}')">Cancel</button>
+        <div class="event-title">${esc(a.title)}</div>
+        <div class="event-sub">${esc([a.provider, a.location].filter(Boolean).join(' • '))}</div>
+        ${a.notes ? `<div class="event-note">${esc(a.notes)}</div>` : ''}
+        <button class="btn btn-danger btn-sm" style="margin-top:10px;width:auto;" onclick="cancelAppointment('${esc(a.id)}')">Cancel</button>
       </div>
     </div>`;
 }
@@ -2660,17 +2667,17 @@ function renderNextAppt() {
     return;
   }
   const next = sortedAppointments()[0];
-  document.getElementById('stat-appt-sub').innerHTML = `<span class="stat-dot" style="background:var(--sage)"></span>${next.title}`;
+  document.getElementById('stat-appt-sub').innerHTML = `<span class="stat-dot" style="background:var(--sage)"></span>${esc(next.title)}`;
   const [, mon, day] = next.dateKey.split('-');
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const dow = new Date(next.dateKey.split('-').join('/')).getDay();
   box.innerHTML = `
     <div>
-      <div class="t-title" style="font-size:18px;color:var(--navy);">${next.title}</div>
-      <div style="font-size:14px;color:var(--text-secondary);margin-top:4px;">${[next.provider, next.time].filter(Boolean).join(' &bull; ')}</div>
-      ${next.location ? `<div style="font-size:14px;color:var(--text-muted);margin-top:2px;">${next.location}</div>` : ''}
-      ${next.notes ? `<div style="margin-top:10px;font-size:13px;color:var(--amber);font-weight:600;">Reminder: ${next.notes}</div>` : ''}
-      <button class="btn btn-danger btn-sm" style="margin-top:12px;width:auto;" onclick="cancelAppointment('${next.id}')">Cancel</button>
+      <div class="t-title" style="font-size:18px;color:var(--navy);">${esc(next.title)}</div>
+      <div style="font-size:14px;color:var(--text-secondary);margin-top:4px;">${esc([next.provider, next.time].filter(Boolean).join(' • '))}</div>
+      ${next.location ? `<div style="font-size:14px;color:var(--text-muted);margin-top:2px;">${esc(next.location)}</div>` : ''}
+      ${next.notes ? `<div style="margin-top:10px;font-size:13px;color:var(--amber);font-weight:600;">Reminder: ${esc(next.notes)}</div>` : ''}
+      <button class="btn btn-danger btn-sm" style="margin-top:12px;width:auto;" onclick="cancelAppointment('${esc(next.id)}')">Cancel</button>
     </div>
     <div style="text-align:right;flex-shrink:0;margin-left:12px;">
       <div class="t-title" style="font-size:22px;color:var(--navy);">${dayNames[dow]}</div>
@@ -2733,8 +2740,8 @@ function showCalDayPopover(el, dayAppts) {
   const shown = dayAppts.slice(0, 2);
   const extra = dayAppts.length - shown.length;
   pop.innerHTML = shown.map(a => `
-    <div class="cal-day-popover-title">${a.title}</div>
-    <div class="cal-day-popover-time">${a.time}${a.provider ? ' &bull; ' + a.provider : ''}</div>
+    <div class="cal-day-popover-title">${esc(a.title)}</div>
+    <div class="cal-day-popover-time">${esc(a.time)}${a.provider ? ' &bull; ' + esc(a.provider) : ''}</div>
   `).join('<div style="height:6px;"></div>') + (extra > 0 ? `<div class="cal-day-popover-time" style="margin-top:4px;">+${extra} more</div>` : '');
 
   const rect = el.getBoundingClientRect();
@@ -2757,12 +2764,12 @@ function openApptDetailModal(key) {
     d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
   document.getElementById('appt-detail-body').innerHTML = items.map(a => `
     <div class="appt-detail-item">
-      <div class="appt-detail-title">${a.title}</div>
-      <div class="appt-detail-meta">${[a.time, a.provider].filter(Boolean).join(' • ')}</div>
-      ${a.location ? `<div class="appt-detail-meta">${a.location}</div>` : ''}
-      ${a.notes ? `<div class="appt-detail-note">${a.notes}</div>` : ''}
-      ${a.who ? `<div class="appt-detail-meta">${a.who} is taking them</div>` : ''}
-      <button class="btn btn-danger btn-sm" style="margin-top:12px;width:auto;" onclick="cancelAppointment('${a.id}')">Cancel</button>
+      <div class="appt-detail-title">${esc(a.title)}</div>
+      <div class="appt-detail-meta">${esc([a.time, a.provider].filter(Boolean).join(' • '))}</div>
+      ${a.location ? `<div class="appt-detail-meta">${esc(a.location)}</div>` : ''}
+      ${a.notes ? `<div class="appt-detail-note">${esc(a.notes)}</div>` : ''}
+      ${a.who ? `<div class="appt-detail-meta">${esc(a.who)} is taking them</div>` : ''}
+      <button class="btn btn-danger btn-sm" style="margin-top:12px;width:auto;" onclick="cancelAppointment('${esc(a.id)}')">Cancel</button>
     </div>`).join('');
   document.getElementById('appt-detail-modal').classList.add('open');
 }
@@ -2788,30 +2795,30 @@ function feedPostHTML(post) {
   const when = new Date(post.createdAt).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   const comments = (post.comments || []).map(c => `
     <div class="feed-comment">
-      <div class="comment-avatar" style="background:${colorForPerson(c.user ? c.user.firstName : '?')}">${(c.user ? c.user.firstName : '?').charAt(0).toUpperCase()}</div>
+      <div class="comment-avatar" style="background:${colorForPerson(c.user ? c.user.firstName : '?')}">${esc((c.user ? c.user.firstName : '?').charAt(0).toUpperCase())}</div>
       <div class="comment-bubble">
-        <div class="comment-who">${c.user ? c.user.firstName : 'Someone'}</div>
-        <div class="comment-text">${c.content}</div>
+        <div class="comment-who">${esc(c.user ? c.user.firstName : 'Someone')}</div>
+        <div class="comment-text">${esc(c.content)}</div>
       </div>
     </div>`).join('');
   return `
-    <div class="feed-item" id="post-${post.id}">
+    <div class="feed-item" id="post-${esc(post.id)}">
       <div class="feed-header">
-        <div class="feed-avatar" style="background:${colorForPerson(post.user ? post.user.firstName : '?')}">${initial}</div>
+        <div class="feed-avatar" style="background:${colorForPerson(post.user ? post.user.firstName : '?')}">${esc(initial)}</div>
         <div class="feed-meta">
-          <div class="feed-who">${post.user ? post.user.firstName : 'Someone'}${post.user && post.user.id === currentUser.id ? ' (you)' : ''}</div>
+          <div class="feed-who">${esc(post.user ? post.user.firstName : 'Someone')}${post.user && post.user.id === currentUser.id ? ' (you)' : ''}</div>
           <div class="feed-when">${when}</div>
         </div>
       </div>
       <div class="feed-content">
-        <span class="feed-tag">${post.tag}</span><br>${post.content}
+        <span class="feed-tag">${esc(post.tag)}</span><br>${esc(post.content)}
       </div>
       <div class="feed-actions">
         <button class="feed-action-btn" onclick="showToast('❤️ Reaction added')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
           React
         </button>
-        <button class="feed-action-btn" onclick="openComment('${post.id}')">
+        <button class="feed-action-btn" onclick="openComment('${esc(post.id)}')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Comment
         </button>
@@ -3190,6 +3197,7 @@ function toggleHighContrast() {
 function logOut() {
   closeSettings();
   closeApptDetailModal();
+  if (authToken) callApi('logout').catch(() => {}); // ends the session on the server too
   clearAuthToken();
   currentUser = null;
   currentFamily = null;
@@ -3244,7 +3252,7 @@ function clearOnboardingFields() {
 ═══════════════════════════════════════════════════════════ */
 function switchToSeniorMode() {
   closeSettings();
-  document.getElementById('senior-contact-footer').innerHTML = `If you have a question, ask ${currentUser.firstName}`;
+  document.getElementById('senior-contact-footer').innerHTML = `If you have a question, ask ${esc(currentUser.firstName)}`;
   setTimeout(() => document.getElementById('senior-overlay').style.display = 'block', 200);
 }
 function closeSeniorMode() { document.getElementById('senior-overlay').style.display = 'none'; }
