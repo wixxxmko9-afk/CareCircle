@@ -6,6 +6,7 @@
 <title>CareCircle — Family Senior Care</title>
 <meta name="description" content="CareCircle helps families coordinate care for the people they love: medications, appointments, caregiver schedules and an emergency card.">
 <meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#4A7C6F">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
@@ -324,6 +325,29 @@ select.form-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 .toggle.on::after { transform: translateX(22px); }
 
 /* Role badge */
+.sc-name { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.15; }
+.sc-sub { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+.sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.sc-box { background: var(--card); border-radius: 14px; padding: 14px; box-shadow: var(--shadow); }
+.sc-blood { background: var(--red-faint); }
+.sc-label { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); }
+.sc-blood .sc-label { color: var(--red); }
+.sc-big { font-size: 24px; font-weight: 700; color: var(--navy); margin-top: 4px; }
+.sc-blood .sc-big { color: var(--red); }
+.sc-section { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--sage); margin: 22px 0 8px; }
+.sc-chip { display: inline-block; background: var(--red-faint); color: var(--red); font-weight: 600; font-size: 14px; padding: 6px 12px; border-radius: 20px; margin: 0 6px 6px 0; }
+.sc-text { font-size: 15px; color: var(--text); line-height: 1.5; }
+.sc-none { font-size: 14px; color: var(--text-muted); }
+.sc-muted { color: var(--text-muted); font-size: 13px; }
+.sc-row, .sc-contact { display: flex; justify-content: space-between; gap: 12px; padding: 12px 14px; background: var(--card); border-radius: 12px; margin-bottom: 8px; font-size: 15px; color: var(--text); text-decoration: none; box-shadow: var(--shadow); }
+.sc-contact span:last-child { color: var(--sage); font-weight: 600; }
+.sc-foot { margin-top: 26px; font-size: 12px; color: var(--text-muted); line-height: 1.5; text-align: center; }
+#shared-card-screen { display: none; position: fixed; inset: 0; z-index: 9999; background: var(--surface); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.activity-row { padding: 12px 0; border-bottom: 1px solid var(--slate); }
+.activity-row:last-child { border-bottom: none; }
+.activity-text { font-size: 15px; color: var(--text); line-height: 1.4; }
+.activity-text b { font-weight: 600; color: var(--navy); }
+.activity-time { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .role-badge { background: var(--sage-faint); color: var(--sage); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; }
 
 /* Toast */
@@ -385,12 +409,6 @@ select.form-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 .ob-actions { display: flex; gap: 10px; padding: 16px 20px calc(20px + env(safe-area-inset-bottom)); flex-shrink: 0; }
 .ob-actions .btn { flex: 1; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.plan-card { border: 2px solid var(--border); border-radius: var(--radius); padding: 16px 18px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
-.plan-card.selected { border-color: var(--sage); background: var(--sage-faint); }
-.plan-card-header { display: flex; justify-content: space-between; align-items: baseline; }
-.plan-card-name { font-size: 17px; font-weight: 700; color: var(--navy); }
-.plan-card-price { font-size: 15px; font-weight: 700; color: var(--sage); }
-.plan-card-desc { font-size: 14px; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
 .ob-med-row { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
 .ob-med-row-name { font-size: 14px; font-weight: 700; color: var(--navy); }
 .ob-med-row-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
@@ -577,8 +595,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
    subtitles (semi-bold, a bit lighter than titles, in the accent green). */
 *, *::before, *::after { font-weight: 400 !important; }
 .t-title, #header-title, .greeting h1, .auth-hero h1, .modal-title, .ob-step h2,
-.stat-num, .plan-card-name, .em-card-name, .em-section h3, .alert-banner-text h3,
-.pinned-banner h3, .med-card-name, .med-name, .appt-detail-title, .event-title,
+.stat-num, .pinned-banner h3, .med-card-name, .med-name, .appt-detail-title, .event-title,
 .shift-name, .feed-who, .comment-who, .ob-med-row-name, .senior-med-name { font-weight: 700 !important; }
 .t-sub, .greeting p, .auth-hero p, .ob-step .ob-sub, .section-label, .stat-label,
 .med-card-dose, .event-sub { font-weight: 600 !important; color: var(--sage) !important; }
@@ -651,13 +668,13 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
     </div>
     <div class="form-group">
       <label class="form-label">Password</label>
-      <input class="form-input" type="password" id="signup-password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateSignupPasswordHint()" />
+      <input class="form-input" type="password" id="signup-password" placeholder="At least 8 characters" autocomplete="new-password" oninput="updateSignupPasswordHint()" />
       <div class="password-meter" id="signup-password-meter">
         <div class="password-meter-seg" id="signup-password-seg-1"></div>
         <div class="password-meter-seg" id="signup-password-seg-2"></div>
         <div class="password-meter-seg" id="signup-password-seg-3"></div>
       </div>
-      <div class="password-hint" id="signup-password-hint">&bull; At least 6 characters</div>
+      <div class="password-hint" id="signup-password-hint">&bull; At least 8 characters</div>
     </div>
     <div class="form-group">
       <label class="form-label">Confirm password</label>
@@ -676,6 +693,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
     </div>
     <h1>CareCircle</h1>
     <p id="join-family-subtitle">You've been invited to join a family</p>
+    <p id="join-role-note" style="font-size:13px;opacity:0.9;margin-top:6px;"></p>
   </div>
 
   <div class="auth-form">
@@ -690,13 +708,13 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
     </div>
     <div class="form-group">
       <label class="form-label">Create a password</label>
-      <input class="form-input" type="password" id="join-password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateJoinPasswordHint()" />
+      <input class="form-input" type="password" id="join-password" placeholder="At least 8 characters" autocomplete="new-password" oninput="updateJoinPasswordHint()" />
       <div class="password-meter" id="join-password-meter">
         <div class="password-meter-seg" id="join-password-seg-1"></div>
         <div class="password-meter-seg" id="join-password-seg-2"></div>
         <div class="password-meter-seg" id="join-password-seg-3"></div>
       </div>
-      <div class="password-hint" id="join-password-hint">&bull; At least 6 characters</div>
+      <div class="password-hint" id="join-password-hint">&bull; At least 8 characters</div>
     </div>
     <div class="form-group">
       <label class="form-label">Confirm password</label>
@@ -706,33 +724,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
   </div>
 </div>
 
-<!-- PLAN SELECTION (shown once, right after signup) -->
-<div id="plan-screen" style="display:none;flex-direction:column;position:fixed;inset:0;background:var(--surface);z-index:9998;max-width:480px;margin:0 auto;overflow:hidden;">
-  <div class="ob-header">
-    <div class="ob-header-label">Choose your plan</div>
-  </div>
-  <div style="padding:16px 20px 0;flex:1;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;">
-    <div class="plan-card selected" data-plan="free" onclick="selectPlan('free')">
-      <div class="plan-card-header">
-        <div class="plan-card-name">Free</div>
-        <div class="plan-card-price">$0/mo</div>
-      </div>
-      <div class="plan-card-desc">Medication tracking, appointments, and up to 2 family members.</div>
-    </div>
-    <div class="plan-card" data-plan="premium" onclick="selectPlan('premium')">
-      <div class="plan-card-header">
-        <div class="plan-card-name">Premium</div>
-        <div class="plan-card-price">$14/mo</div>
-      </div>
-      <div class="plan-card-desc">Unlimited family members, medication reminders, and priority support.</div>
-    </div>
-  </div>
-  <div class="ob-actions">
-    <button class="btn btn-primary" style="width:100%;" onclick="confirmPlanAndContinue()">Continue</button>
-  </div>
-</div>
-
-<!-- INVITE FAMILY MEMBERS (shown once, right after plan selection) -->
+<!-- INVITE FAMILY MEMBERS (shown once, right after signup) -->
 <div id="invite-screen" style="display:none;flex-direction:column;position:fixed;inset:0;background:var(--surface);z-index:9998;max-width:480px;margin:0 auto;overflow:hidden;">
   <div class="ob-header">
     <div class="ob-header-label">Invite family members</div>
@@ -944,7 +936,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
   <!-- HEADER -->
   <div id="header">
     <div id="header-title">CareCircle</div>
-    <span id="header-badge">Smith Family</span>
+    <span id="header-badge"></span>
     <button id="header-action" onclick="openSettings()" aria-label="Settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
@@ -955,29 +947,30 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
 
     <!-- HOME -->
     <div class="screen active" id="screen-home">
+      <div id="viewer-banner" style="display:none;background:var(--slate);color:var(--text-secondary);font-size:13px;font-weight:600;padding:10px 14px;border-radius:12px;margin:0 0 12px;">You have view-only access. You can see everything but can't make changes.</div>
       <div class="greeting">
-        <h1 id="greeting-text">Good morning, Sarah</h1>
-        <p>Tuesday, Sept 2 &bull; Mom's care overview</p>
+        <h1 id="greeting-text"></h1>
+        <p id="greeting-sub"></p>
       </div>
 
-      <div class="alert-banner" id="home-alert-banner">
+      <div class="alert-banner" id="home-alert-banner" style="display:none;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <div class="alert-banner-text">
-          <h3>Lisinopril not confirmed</h3>
-          <p>Mom's 8:00 AM dose was due 2 hours ago.</p>
+          <h3 id="home-alert-title"></h3>
+          <p id="home-alert-text"></p>
         </div>
       </div>
 
       <div class="stat-row">
         <div class="stat-card" onclick="goTo('meds')">
-          <div class="stat-num" id="stat-med-count">4</div>
+          <div class="stat-num" id="stat-med-count">0</div>
           <div class="stat-label">Medications</div>
-          <div class="stat-sub" id="stat-med-sub"><span class="stat-dot" style="background:var(--success)"></span>3 confirmed today</div>
+          <div class="stat-sub" id="stat-med-sub"></div>
         </div>
         <div class="stat-card" onclick="goTo('calendar')">
-          <div class="stat-num" id="stat-appt-count">2</div>
+          <div class="stat-num" id="stat-appt-count">0</div>
           <div class="stat-label">This week</div>
-          <div class="stat-sub" id="stat-appt-sub"><span class="stat-dot" style="background:var(--sage)"></span>Cardiology Thursday</div>
+          <div class="stat-sub" id="stat-appt-sub"></div>
         </div>
       </div>
 
@@ -987,7 +980,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
       <div class="section-label">Coverage this week</div>
       <div class="card">
         <div id="home-coverage-content"></div>
-        <button class="btn btn-secondary btn-sm" style="margin-top:14px;" onclick="openCoverageModal()">Shifts</button>
+        <button class="btn btn-secondary btn-sm" data-perm="editShifts" style="margin-top:14px;" onclick="openCoverageModal()">Shifts</button>
       </div>
 
       <div class="section-label">Next appointment</div>
@@ -1001,11 +994,11 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
       <div style="padding:16px 16px 4px;display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div class="t-title" style="font-size:22px;color:var(--navy);">Medications</div>
-          <div class="t-sub" style="font-size:14px;margin-top:3px;" id="meds-subtitle">Dorothy Smith &bull; 4 active</div>
+          <div class="t-sub" style="font-size:14px;margin-top:3px;" id="meds-subtitle"></div>
         </div>
-        <div style="text-align:right;">
+        <div style="text-align:right;display:none;" id="adherence-box">
           <div style="font-size:13px;color:var(--text-muted);">Today's adherence</div>
-          <div class="t-title" style="font-size:22px;color:var(--success);" id="meds-adherence">75%</div>
+          <div class="t-title" style="font-size:22px;color:var(--success);" id="meds-adherence"></div>
         </div>
       </div>
 
@@ -1018,7 +1011,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
       <div class="mini-cal">
         <div class="cal-nav">
           <button class="cal-btn" aria-label="Previous month" onclick="changeMonth(-1)">&#8249;</button>
-          <div class="cal-month" id="cal-month-label">September 2026</div>
+          <div class="cal-month" id="cal-month-label"></div>
           <button class="cal-btn" aria-label="Next month" onclick="changeMonth(1)">&#8250;</button>
         </div>
         <div class="cal-grid" id="cal-grid">
@@ -1029,7 +1022,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
 
       <div style="display:flex; align-items:center; justify-content:space-between; margin:20px 16px 10px;">
         <div class="section-label" style="margin:0;">Caregiver coverage</div>
-        <button onclick="openCoverageModal()" style="background:none;border:none;color:var(--sage);font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);padding:6px 4px;min-height:36px;">Edit</button>
+        <button data-perm="editShifts" onclick="openCoverageModal()" style="background:none;border:none;color:var(--sage);font-weight:700;font-size:14px;cursor:pointer;font-family:var(--font);padding:6px 4px;min-height:36px;">Edit</button>
       </div>
       <div class="shift-row" id="calendar-coverage-row"></div>
 
@@ -1080,7 +1073,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
         <div style="font-size:14px;opacity:0.88;line-height:1.6;" id="em-conditions"></div>
       </div>
 
-      <button class="share-btn" onclick="showToast('Sharing link copied — expires in 24h')">
+      <button class="share-btn" data-perm="manageHealth" onclick="openShareModal()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         Share emergency card
       </button>
@@ -1103,7 +1096,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
       </div>
 
       <div style="margin:0 16px 20px;font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;">
-        This is a family-managed summary for emergency reference only.<br>Not a clinical medical record. Last updated Sep 2, 2026.
+        This is a family-managed summary for emergency reference only.<br>Not a clinical medical record. <span id="em-updated"></span>
       </div>
     </div>
 
@@ -1116,7 +1109,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
       <span class="tab-label">Home</span>
     </button>
     <button class="tab" role="tab" aria-selected="false" aria-label="Medications" onclick="goTo('meds')">
-      <div class="tab-dot show"></div>
+      <div class="tab-dot" id="meds-tab-dot"></div>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M10.5 20H4a2 2 0 0 1-2-2V5c0-1.1.9-2 2-2h3.93a2 2 0 0 1 1.66.9l.82 1.2a2 2 0 0 0 1.66.9H20a2 2 0 0 1 2 2v2"/><circle cx="16" cy="19" r="4"/><path d="M16 17v4"/><path d="M14 19h4"/></svg>
       <span class="tab-label">Meds</span>
     </button>
@@ -1164,7 +1157,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">Invite family member</div>
+      <div class="modal-title">Invite someone</div>
       <button class="modal-close" onclick="closeInviteModal()">&#x2715;</button>
     </div>
     <div class="modal-body">
@@ -1176,8 +1169,92 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
         <label class="form-label">Email</label>
         <input class="form-input" type="email" id="invite-email-input" placeholder="e.g. john@example.com" />
       </div>
+      <div class="form-group">
+        <label class="form-label">What can they do?</label>
+        <select class="form-input" id="invite-role-input" onchange="updateInviteRoleHelp()"></select>
+        <div class="settings-sub" id="invite-role-help" style="margin-top:6px;"></div>
+      </div>
       <button class="btn btn-primary" onclick="submitInvite()">Invite</button>
       <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeInviteModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Public shared emergency card (opened from a share link; no login) -->
+<div id="shared-card-screen">
+  <div style="max-width:480px;margin:0 auto;padding:22px 20px 40px;">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;"><span class="role-badge">Emergency card</span><span class="sc-muted">CareCircle</span></div>
+    <div id="shared-card-body"><div class="sc-text">Loading…</div></div>
+  </div>
+</div>
+
+<!-- MODAL: Share emergency card -->
+<div class="modal-overlay" id="share-modal" style="z-index:250;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Share emergency card</div>
+      <button class="modal-close" onclick="closeShareModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;margin-bottom:12px;">Creates a link to a <b>read-only</b> copy of the card: allergies, conditions, medications and emergency contacts. Insurance numbers are not included. The link stops working after 24 hours.</p>
+      <p style="font-size:13px;color:var(--red);line-height:1.5;margin-bottom:14px;font-weight:600;">Anyone who has the link can open it. Only send it to a doctor, nurse, paramedic or family member you trust.</p>
+      <div class="settings-sub" id="share-status" style="margin-bottom:12px;"></div>
+      <button class="btn btn-primary" id="share-create-btn" onclick="createShareLinkUi()">Create a 24-hour link</button>
+      <div id="share-result" style="display:none;">
+        <input class="form-input" id="share-link-input" type="text" readonly onclick="this.select()" />
+        <div class="settings-sub" id="share-expiry" style="margin:8px 0 12px;"></div>
+        <button class="btn btn-primary" onclick="copyShareLink()">Copy link</button>
+        <button class="btn btn-secondary" id="share-native-btn" style="margin-top:10px;" onclick="nativeShareLink()">Share…</button>
+      </div>
+      <button class="btn btn-danger" id="share-revoke-btn" style="margin-top:10px;display:none;" onclick="revokeShareLinksUi()">Turn off all links</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Activity history -->
+<div class="modal-overlay" id="activity-modal" style="z-index:250;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Activity history</div>
+      <button class="modal-close" onclick="closeActivityModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body" id="activity-list"></div>
+  </div>
+</div>
+
+<!-- MODAL: Confirm -->
+<div class="modal-overlay" id="confirm-modal" style="z-index:300;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><div class="modal-title" id="confirm-title">Are you sure?</div></div>
+    <div class="modal-body">
+      <p id="confirm-message" style="font-size:15px;color:var(--text-secondary);line-height:1.5;margin-bottom:18px;"></p>
+      <button class="btn btn-danger" id="confirm-ok" onclick="answerConfirm(true)">Delete</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="answerConfirm(false)">Keep it</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Manage a member (primary caregiver only) -->
+<div class="modal-overlay" id="member-modal" style="z-index:250;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Manage member</div>
+      <button class="modal-close" onclick="closeMemberModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-label" id="member-modal-name"></div>
+      <div class="settings-sub" id="member-modal-email" style="margin-bottom:16px;"></div>
+      <div class="form-group">
+        <label class="form-label">What can they do?</label>
+        <select class="form-input" id="member-role-input" onchange="updateMemberRoleHelp()"></select>
+        <div class="settings-sub" id="member-role-help" style="margin-top:6px;"></div>
+      </div>
+      <button class="btn btn-primary" onclick="saveMemberRole()">Save role</button>
+      <button class="btn btn-danger" style="margin-top:10px;" onclick="removeMemberUi()">Remove from family</button>
     </div>
   </div>
 </div>
@@ -1231,7 +1308,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">Add medication</div>
+      <div class="modal-title" id="med-modal-title">Add medication</div>
       <button class="modal-close" onclick="closeMedModal()">&#x2715;</button>
     </div>
     <div class="modal-body">
@@ -1277,7 +1354,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header">
-      <div class="modal-title">Add appointment</div>
+      <div class="modal-title" id="appt-modal-title">Add appointment</div>
       <button class="modal-close" onclick="closeApptModal()">&#x2715;</button>
     </div>
     <div class="modal-body">
@@ -1302,15 +1379,10 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
         <input id="appt-notes-input" class="form-input" type="text" placeholder="e.g. Bring insurance card" />
       </div>
       <div class="form-group">
-        <label class="form-label">Who's taking her?</label>
-        <select id="appt-who-input" class="form-input">
-          <option>Sarah</option>
-          <option>John</option>
-          <option>Nurse Linda</option>
-          <option>TBD</option>
-        </select>
+        <label class="form-label">Who's taking them?</label>
+        <select id="appt-who-input" class="form-input"></select>
       </div>
-      <button class="btn btn-primary" onclick="submitAppt()">Add</button>
+      <button class="btn btn-primary" id="appt-submit-btn" onclick="submitAppt()">Add</button>
       <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeApptModal()">Cancel</button>
     </div>
   </div>
@@ -1344,13 +1416,13 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
         </div>
         <div class="form-group">
           <label class="form-label">New password</label>
-          <input class="form-input" type="password" id="fp-new-password" placeholder="At least 6 characters" autocomplete="new-password" oninput="updateForgotPasswordHint()" />
+          <input class="form-input" type="password" id="fp-new-password" placeholder="At least 8 characters" autocomplete="new-password" oninput="updateForgotPasswordHint()" />
           <div class="password-meter" id="fp-password-meter">
             <div class="password-meter-seg" id="fp-password-seg-1"></div>
             <div class="password-meter-seg" id="fp-password-seg-2"></div>
             <div class="password-meter-seg" id="fp-password-seg-3"></div>
           </div>
-          <div class="password-hint" id="fp-password-hint">&bull; At least 6 characters</div>
+          <div class="password-hint" id="fp-password-hint">&bull; At least 8 characters</div>
         </div>
         <button class="btn btn-primary" id="fp-reset-btn" onclick="submitPasswordReset()">Reset password</button>
         <button class="btn btn-secondary" style="margin-top:10px;" type="button" onclick="showForgotPasswordStage('request')">Didn't get a code? Try again</button>
@@ -1390,14 +1462,18 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
     <div class="modal-body" style="padding:0 0 20px;">
       <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Your account</div>
       <div class="settings-row" style="cursor:default;">
-        <div><div class="settings-label" id="settings-account-name">Sarah Johnson</div><div class="settings-sub" id="settings-account-email">sarah@example.com</div></div>
-        <span class="role-badge" id="settings-account-role">Primary caregiver</span>
+        <div><div class="settings-label" id="settings-account-name"></div><div class="settings-sub" id="settings-account-email"></div></div>
+        <span class="role-badge" id="settings-account-role"></span>
       </div>
       <div class="settings-row" style="cursor:default;">
-        <div><div class="settings-label" id="settings-family-name">Smith Family</div><div class="settings-sub" id="settings-plan-members">Premium plan — 3 members</div></div>
+        <div><div class="settings-label" id="settings-family-name"></div><div class="settings-sub" id="settings-plan-members"></div></div>
       </div>
       <div id="settings-member-list"></div>
-      <div class="settings-row" onclick="editHealthSummary()">
+      <div class="settings-row" onclick="openActivityModal()">
+        <div><div class="settings-label">Activity history</div><div class="settings-sub">See who changed what, and when</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="settings-row" data-perm-row="manageHealth" onclick="editHealthSummary()">
         <div><div class="settings-label">Edit health summary</div><div class="settings-sub">Update allergies, contacts, insurance</div></div>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
@@ -1427,8 +1503,8 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
         <div><div class="settings-label">Senior mode</div><div class="settings-sub">Simple view — reminders only</div></div>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
-      <div class="settings-row" onclick="openInviteModal()">
-        <div><div class="settings-label">Invite family member</div><div class="settings-sub">Add sibling or caregiver</div></div>
+      <div class="settings-row" data-perm-row="invite" onclick="openInviteModal()">
+        <div><div class="settings-label">Invite someone</div><div class="settings-sub">Family, caregivers or view-only guests</div></div>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
 
@@ -1454,36 +1530,8 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
     <button onclick="closeSeniorMode()" style="background:rgba(255,255,255,0.15);border:none;color:white;border-radius:50%;width:44px;height:44px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
   </div>
   <div style="padding:16px;">
-    <div style="background:var(--card);border-radius:20px;padding:24px;margin-bottom:14px;box-shadow:var(--shadow);">
-      <div class="t-sub" style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">8:00 AM</div>
-      <div class="t-title" style="font-size:28px;color:var(--navy);margin-bottom:4px;">Lisinopril</div>
-      <div style="font-size:20px;color:var(--text-secondary);margin-bottom:20px;">10 mg — one tablet</div>
-      <button onclick="seniorConfirm(this)" style="width:100%;min-height:72px;background:var(--sage);color:white;border:none;border-radius:18px;font-size:22px;font-weight:800;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:12px;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        I took it
-      </button>
-    </div>
-    <div style="background:var(--card);border-radius:20px;padding:24px;margin-bottom:14px;box-shadow:var(--shadow);">
-      <div class="t-sub" style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">8:00 AM</div>
-      <div class="t-title" style="font-size:28px;color:var(--navy);margin-bottom:4px;">Metformin</div>
-      <div style="font-size:20px;color:var(--text-secondary);margin-bottom:20px;">500 mg — one tablet</div>
-      <button style="width:100%;min-height:72px;background:var(--success);color:white;border:none;border-radius:18px;font-size:22px;font-weight:800;cursor:pointer;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:12px;">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        Confirmed ✓
-      </button>
-    </div>
-    <div style="background:var(--card);border-radius:20px;padding:24px;box-shadow:var(--shadow);">
-      <div class="t-sub" style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">1:00 PM</div>
-      <div class="t-title" style="font-size:28px;color:var(--navy);margin-bottom:4px;">Aspirin</div>
-      <div style="font-size:20px;color:var(--text-secondary);margin-bottom:20px;">81 mg — one tablet</div>
-      <button disabled style="width:100%;min-height:72px;background:var(--slate);color:var(--text-muted);border:none;border-radius:18px;font-size:22px;font-weight:800;cursor:default;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:12px;">
-        Not yet — 1:00 PM
-      </button>
-    </div>
-    <div style="margin-top:16px;text-align:center;font-size:14px;color:var(--text-muted);line-height:1.6;" id="senior-contact-footer">
-      If you have a question, call Sarah<br>
-      <a href="tel:555-0181" style="color:var(--sage);font-size:20px;font-weight:800;text-decoration:none;display:block;margin-top:8px;">555-0181</a>
-    </div>
+    <div id="senior-list"></div>
+    <div style="margin-top:16px;text-align:center;font-size:14px;color:var(--text-muted);line-height:1.6;" id="senior-contact-footer"></div>
   </div>
 </div>
 
@@ -1570,15 +1618,30 @@ function goTo(id) {
     t.classList.toggle('active', screens[i] === id);
     t.setAttribute('aria-selected', screens[i] === id);
   });
-  document.getElementById('fab').style.display =
-    ['home','meds','calendar','feed'].includes(id) ? 'flex' : 'none';
   currentScreen = id;
+  document.getElementById('fab').style.display =
+    (['home','meds','calendar','feed'].includes(id) && (!currentUser || fabAllowedOn(id))) ? 'flex' : 'none';
 }
 
 function openFab() {
-  if (currentScreen === 'meds')     { document.getElementById('med-modal').classList.add('open'); return; }
-  if (currentScreen === 'calendar') { document.getElementById('appt-modal').classList.add('open'); return; }
+  if (currentScreen === 'meds')     { openMedModal(); return; }
+  if (currentScreen === 'calendar') { openApptModal(); return; }
   openComment();
+}
+
+/* A friendly confirm box (replaces the browser's confirm()). */
+let _confirmResolve = null;
+function askConfirm(title, message, okLabel) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-message').textContent = message;
+  document.getElementById('confirm-ok').textContent = okLabel || 'Delete';
+  document.getElementById('confirm-modal').classList.add('open');
+  return new Promise(res => { _confirmResolve = res; });
+}
+function answerConfirm(yes) {
+  document.getElementById('confirm-modal').classList.remove('open');
+  const r = _confirmResolve; _confirmResolve = null;
+  if (r) r(!!yes);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1586,8 +1649,6 @@ function openFab() {
 ═══════════════════════════════════════════════════════════ */
 let currentUser = null;   // { id, email, fullName, firstName, role }
 let currentFamily = null; // { id, name, plan }
-let pendingSignup = null; // { fullName, email, password } — held between the signup form and plan screen
-let selectedPlan = 'free';
 let pendingInviteDrafts = []; // invites collected on the onboarding invite screen, sent on Continue
 
 function switchAuthTab(which) {
@@ -1669,13 +1730,13 @@ async function submitLogin() {
 
 function passwordStrengthLevel(pw) {
   if (!pw) return 'empty';
-  if (pw.length < 6) return 'weak';
+  if (pw.length < 8) return 'weak';
   let variety = 0;
   if (/[a-z]/.test(pw)) variety++;
   if (/[A-Z]/.test(pw)) variety++;
   if (/[0-9]/.test(pw)) variety++;
   if (/[^A-Za-z0-9]/.test(pw)) variety++;
-  if (pw.length >= 8 && variety >= 2) return 'strong';
+  if ((pw.length >= 10 && variety >= 2) || pw.length >= 14) return 'strong';
   return 'medium';
 }
 function updatePasswordMeterUI(inputId, hintId, segPrefix) {
@@ -1689,7 +1750,7 @@ function updatePasswordMeterUI(inputId, hintId, segPrefix) {
   segs.forEach(seg => seg.classList.remove('fill-weak', 'fill-medium', 'fill-strong'));
 
   if (level === 'empty') {
-    hint.innerHTML = '&bull; At least 6 characters';
+    hint.innerHTML = '&bull; At least 8 characters';
     return;
   }
   input.classList.add('pw-' + level);
@@ -1698,7 +1759,7 @@ function updatePasswordMeterUI(inputId, hintId, segPrefix) {
   for (let i = 0; i < filled; i++) segs[i].classList.add('fill-' + level);
 
   const icon = level === 'strong' ? '&check;' : level === 'medium' ? '&check;' : '&bull;';
-  const label = level === 'weak' ? 'At least 6 characters' : level === 'medium' ? 'Good — meets the minimum' : 'Strong password';
+  const label = level === 'weak' ? 'At least 8 characters' : level === 'medium' ? 'Good — meets the minimum' : 'Strong password';
   hint.innerHTML = icon + ' ' + label;
 }
 function updateSignupPasswordHint() {
@@ -1719,7 +1780,7 @@ async function submitSignup() {
 
   if (!fullName || !email || !pw || !confirm) { showAuthError('signup', 'Fill in every field to continue'); return; }
   if (!validEmail(email)) { showAuthError('signup', 'Enter a valid email address'); return; }
-  if (pw.length < 6) { showAuthError('signup', 'Password must be at least 6 characters'); return; }
+  if (pw.length < 8) { showAuthError('signup', 'Password must be at least 8 characters'); return; }
   if (pw !== confirm) { showAuthError('signup', 'Passwords do not match'); return; }
   hideAuthError('signup');
 
@@ -1792,7 +1853,19 @@ async function continueFromInviteScreen() {
 }
 
 /* Invite someone later, from Settings */
-function openInviteModal() { document.getElementById('invite-modal').classList.add('open'); }
+function openInviteModal() {
+  if (!can('invite')) { showToast('Only caregivers can invite people'); return; }
+  const sel = document.getElementById('invite-role-input');
+  const roles = currentUser.role === 'primary_caregiver' ? ['caregiver', 'family_member', 'viewer'] : ['family_member', 'viewer'];
+  sel.innerHTML = roles.map(r => `<option value="${r}">${roleLabel(r).replace(' (view only)', '')}</option>`).join('');
+  sel.value = roles.indexOf('family_member') !== -1 ? 'family_member' : roles[0];
+  updateInviteRoleHelp();
+  document.getElementById('invite-modal').classList.add('open');
+}
+function updateInviteRoleHelp() {
+  const v = document.getElementById('invite-role-input').value;
+  document.getElementById('invite-role-help').textContent = ROLE_HELP[v] || '';
+}
 function closeInviteModal() { document.getElementById('invite-modal').classList.remove('open'); }
 async function submitInvite() {
   const name = document.getElementById('invite-name-input').value.trim();
@@ -1800,7 +1873,7 @@ async function submitInvite() {
   if (!name) { showToast('Enter a name'); return; }
   if (!email || !validEmail(email)) { showToast('Enter a valid email'); return; }
   try {
-    await callApi('addInvite', { name, email });
+    await callApi('addInvite', { name, email, role: document.getElementById('invite-role-input').value });
     document.getElementById('invite-name-input').value = '';
     document.getElementById('invite-email-input').value = '';
     closeInviteModal();
@@ -1830,19 +1903,188 @@ function renderSettingsFamilyInfo() {
   document.getElementById('settings-family-name').textContent = currentFamily ? currentFamily.name : '';
   document.getElementById('settings-plan-members').textContent =
     planLabel + ' plan — ' + total + (total === 1 ? ' member' : ' members');
+  const isPrimary = currentUser.role === 'primary_caregiver';
   const joinedRows = familyMembers.filter(m => m.id !== currentUser.id).map(m => `
-    <div class="settings-row" style="cursor:default;">
+    <div class="settings-row" style="${isPrimary && m.role !== 'primary_caregiver' ? '' : 'cursor:default;'}" ${isPrimary && m.role !== 'primary_caregiver' ? `onclick="openMemberModal('${esc(m.id)}')"` : ''}>
       <div><div class="settings-label">${esc(m.fullName)}</div><div class="settings-sub">${esc(m.email)}</div></div>
-      <span class="role-badge">${roleLabel(m.role)}</span>
+      <span class="role-badge">${roleLabel(m.role).replace(' (view only)', '')}${m.role === 'viewer' ? ' · view only' : ''}</span>
     </div>`).join('');
   const invitedRows = pendingInvites.map(m => `
     <div class="settings-row" style="cursor:default;">
-      <div><div class="settings-label">${esc(m.name)}</div><div class="settings-sub">${esc(m.email)}</div></div>
-      <span class="pill pill-amber">Invited</span>
+      <div><div class="settings-label">${esc(m.name)}</div><div class="settings-sub">${esc(m.email)} &bull; ${esc(roleLabel(m.role || 'family_member').replace(' (view only)', ''))}</div></div>
+      ${can('invite') ? `<button class="btn btn-danger btn-sm" style="width:auto;" onclick="cancelInviteUi('${esc(m.id)}')">Cancel</button>` : '<span class="pill pill-amber">Invited</span>'}
     </div>`).join('');
   document.getElementById('settings-member-list').innerHTML = joinedRows + invitedRows;
   document.getElementById('feed-family-subtitle').textContent =
     (currentFamily ? currentFamily.name : '') + ' • ' + total + (total === 1 ? ' member' : ' members');
+}
+
+/* ── Share the emergency card ── */
+let shareLinkUrl = null;
+function sharePageBase() { return location.href.split('#')[0].split('?')[0]; }
+async function openShareModal() {
+  if (!can('manageHealth')) { showToast('Only caregivers can share the card'); return; }
+  shareLinkUrl = null;
+  document.getElementById('share-result').style.display = 'none';
+  document.getElementById('share-create-btn').style.display = '';
+  document.getElementById('share-status').textContent = '';
+  document.getElementById('share-revoke-btn').style.display = 'none';
+  document.getElementById('share-modal').classList.add('open');
+  try {
+    const st = await callApi('getShareStatus');
+    if (st.active) {
+      document.getElementById('share-status').textContent = st.active + (st.active === 1 ? ' link is' : ' links are') + ' active right now (the newest expires ' + timeAgoLabel(st.expiresAt).replace('Today, ', 'today at ') + ' or later).';
+      document.getElementById('share-revoke-btn').style.display = '';
+    }
+  } catch (err) { /* status is a nice-to-have */ }
+}
+function closeShareModal() { document.getElementById('share-modal').classList.remove('open'); }
+async function createShareLinkUi() {
+  const btn = document.getElementById('share-create-btn');
+  btn.disabled = true;
+  try {
+    const r = await callApi('createShareLink');
+    shareLinkUrl = sharePageBase() + '?card=' + r.token;
+    document.getElementById('share-link-input').value = shareLinkUrl;
+    document.getElementById('share-expiry').textContent = 'Expires ' + new Date(r.expiresAt).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }) + '.';
+    document.getElementById('share-result').style.display = 'block';
+    document.getElementById('share-native-btn').style.display = navigator.share ? '' : 'none';
+    btn.style.display = 'none';
+    document.getElementById('share-revoke-btn').style.display = '';
+  } catch (err) { showToast(err.message); }
+  finally { btn.disabled = false; }
+}
+async function copyShareLink() {
+  if (!shareLinkUrl) return;
+  try { await navigator.clipboard.writeText(shareLinkUrl); showToast('Link copied'); }
+  catch (e) {
+    const el = document.getElementById('share-link-input'); el.focus(); el.select();
+    showToast('Press Copy on your keyboard');
+  }
+}
+async function nativeShareLink() {
+  if (!shareLinkUrl || !navigator.share) return;
+  try { await navigator.share({ title: 'Emergency card', text: 'Emergency card (link expires in 24 hours)', url: shareLinkUrl }); } catch (e) { /* cancelled */ }
+}
+async function revokeShareLinksUi() {
+  if (!await askConfirm('Turn off all links?', 'Anyone who has a link will no longer be able to open the card.', 'Turn off')) return;
+  try {
+    const r = await callApi('revokeShareLinks');
+    shareLinkUrl = null;
+    document.getElementById('share-result').style.display = 'none';
+    document.getElementById('share-create-btn').style.display = '';
+    document.getElementById('share-revoke-btn').style.display = 'none';
+    document.getElementById('share-status').textContent = '';
+    showToast(r.revoked ? 'All links turned off' : 'No active links');
+  } catch (err) { showToast(err.message); }
+}
+
+/* The public, read-only page someone sees when they open a shared link. */
+async function showSharedCard(token) {
+  const box = document.getElementById('shared-card-body');
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('shared-card-screen').style.display = 'block';
+  try {
+    const c = await callApi('getSharedCard', { card: token });
+    const allergies = (c.allergies || '').split(',').map(a => a.trim()).filter(Boolean);
+    let age = '';
+    if (c.dob) { const d = new Date(c.dob + 'T00:00:00'); age = 'Born ' + d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ' • Age ' + Math.floor((Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000)); }
+    const tel = x => String((x.countryCode || '') + (x.phone || '')).replace(/[^\d+]/g, '');
+    box.innerHTML = `
+      <div class="sc-name">${esc(c.name)}</div>
+      ${age ? `<div class="sc-sub">${esc(age)}</div>` : ''}
+      <div class="sc-grid">
+        <div class="sc-box sc-blood"><div class="sc-label">Blood type</div><div class="sc-big">${esc(c.bloodType || '—')}</div></div>
+        <div class="sc-box"><div class="sc-label">Weight</div><div class="sc-big">${c.weightValue ? esc(c.weightValue + ' ' + (c.weightUnit || '')) : '—'}</div></div>
+      </div>
+      <div class="sc-section">Allergies</div>
+      <div>${allergies.length ? allergies.map(a => `<span class="sc-chip">${esc(a)}</span>`).join('') : '<span class="sc-none">None recorded</span>'}</div>
+      <div class="sc-section">Conditions</div>
+      <div class="sc-text">${esc(c.conditions || 'None recorded')}</div>
+      <div class="sc-section">Current medications</div>
+      ${c.medications.length ? c.medications.map(m => `<div class="sc-row"><span>${esc(m.name)}</span><span class="sc-muted">${esc(m.dose)}${m.times && m.times.length ? ' · ' + (m.times.length > 1 ? m.times.length + 'x daily' : 'once daily') : ''}</span></div>`).join('') : '<span class="sc-none">None recorded</span>'}
+      <div class="sc-section">Emergency contacts</div>
+      ${c.contacts.length ? c.contacts.map(x => `<a class="sc-contact" href="tel:${esc(tel(x))}"><span>${esc(x.name)}${x.isPrimary ? ' <span class="sc-muted">(primary)</span>' : ''}</span><span>${esc(x.countryCode)} ${esc(x.phone)}</span></a>`).join('') : '<span class="sc-none">None recorded</span>'}
+      <div class="sc-foot">Read-only copy shared by the family through CareCircle.<br>${c.updatedAt ? 'Last updated ' + esc(new Date(c.updatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })) + '. ' : ''}This link expires ${esc(new Date(c.expiresAt).toLocaleString([], { weekday: 'short', hour: 'numeric', minute: '2-digit' }))}.</div>`;
+  } catch (err) {
+    box.innerHTML = `<div class="sc-name" style="font-size:22px;">Can't open this card</div><div class="sc-text" style="margin-top:10px;">${esc(err.message)}</div>`;
+  }
+}
+
+/* ── Activity history ── */
+function timeAgoLabel(iso) {
+  const d = new Date(iso), now = new Date();
+  const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const sameDay = d.toDateString() === now.toDateString();
+  const y = new Date(now); y.setDate(now.getDate() - 1);
+  if (sameDay) return 'Today, ' + time;
+  if (d.toDateString() === y.toDateString()) return 'Yesterday, ' + time;
+  return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ', ' + time;
+}
+async function openActivityModal() {
+  closeSettings();
+  const box = document.getElementById('activity-list');
+  box.innerHTML = '<div class="settings-sub" style="padding:20px 0;text-align:center;">Loading…</div>';
+  document.getElementById('activity-modal').classList.add('open');
+  try {
+    const rows = await callApi('getActivity');
+    box.innerHTML = rows.length ? rows.map(r => `
+      <div class="activity-row">
+        <div class="activity-text"><b>${esc(r.who)}</b> ${esc(r.detail)}</div>
+        <div class="activity-time">${esc(timeAgoLabel(r.at))}</div>
+      </div>`).join('') : '<div class="settings-sub" style="padding:20px 0;text-align:center;">Nothing yet. Changes will show up here.</div>';
+  } catch (err) {
+    box.innerHTML = '<div class="settings-sub" style="padding:20px 0;text-align:center;">' + esc(err.message) + '</div>';
+  }
+}
+function closeActivityModal() { document.getElementById('activity-modal').classList.remove('open'); }
+
+let managingMemberId = null;
+function openMemberModal(id) {
+  const m = familyMembers.find(x => x.id === id);
+  if (!m) return;
+  managingMemberId = id;
+  document.getElementById('member-modal-name').textContent = m.fullName;
+  document.getElementById('member-modal-email').textContent = m.email;
+  const sel = document.getElementById('member-role-input');
+  sel.innerHTML = ['caregiver', 'family_member', 'viewer'].map(r => `<option value="${r}">${roleLabel(r).replace(' (view only)', '')}</option>`).join('');
+  sel.value = m.role;
+  updateMemberRoleHelp();
+  document.getElementById('member-modal').classList.add('open');
+}
+function closeMemberModal() { document.getElementById('member-modal').classList.remove('open'); managingMemberId = null; }
+function updateMemberRoleHelp() {
+  document.getElementById('member-role-help').textContent = ROLE_HELP[document.getElementById('member-role-input').value] || '';
+}
+async function saveMemberRole() {
+  const id = managingMemberId; if (!id) return;
+  const role = document.getElementById('member-role-input').value;
+  try {
+    await callApi('setMemberRole', { userId: id, role });
+    closeMemberModal();
+    await loadFamilyInfo();
+    showToast('Role updated');
+  } catch (err) { showToast(err.message); }
+}
+async function removeMemberUi() {
+  const id = managingMemberId; if (!id) return;
+  const m = familyMembers.find(x => x.id === id);
+  closeMemberModal();
+  if (!await askConfirm('Remove ' + (m ? m.firstName || m.fullName : 'member') + '?', 'They will be logged out right away and lose access to your family\'s information.', 'Remove')) return;
+  try {
+    await callApi('removeMember', { userId: id });
+    await loadFamilyInfo();
+    renderCoverage();
+    showToast('Member removed');
+  } catch (err) { showToast(err.message); }
+}
+async function cancelInviteUi(id) {
+  if (!await askConfirm('Cancel this invite?', 'The invite link will stop working.', 'Cancel invite')) return;
+  try {
+    await callApi('cancelInvite', { id });
+    await loadFamilyInfo();
+    showToast('Invite cancelled');
+  } catch (err) { showToast(err.message); }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1854,7 +2096,7 @@ const CAREGIVER_PALETTE = ['#1E2D4A', '#4A7C6F', '#C4892A', '#8B5CF6', '#EC4899'
 let caregiverShifts = {};
 
 function getAssignablePeople() {
-  const names = [currentUser.firstName, ...familyMembers.filter(m => m.id !== currentUser.id).map(m => m.firstName), ...pendingInvites.map(i => i.name)];
+  const names = [currentUser.firstName, ...familyMembers.filter(m => m.id !== currentUser.id).map(m => m.firstName), ...pendingInvites.map(i => String(i.name).split(/\s+/)[0])];
   Object.values(caregiverShifts).forEach(name => { if (name) names.push(name); });
   return [...new Set(names)];
 }
@@ -1933,16 +2175,23 @@ function renderCoverage() {
 }
 
 function openCoverageModal() {
+  if (!can('editShifts')) { showToast('You have view-only access'); return; }
+  const limited = currentUser.role === 'family_member';   // may only take open shifts / give up their own
   const people = getAssignablePeople();
-  document.getElementById('coverage-modal-body').innerHTML = CAREGIVER_DAYS.map(d => {
+  document.getElementById('coverage-modal-body').innerHTML =
+    (limited ? '<div class="settings-sub" style="margin-bottom:14px;">You can take open days or give up your own. Caregivers can change the rest.</div>' : '') +
+    CAREGIVER_DAYS.map(d => {
     const current = caregiverShifts[d];
-    const options = people.map(p =>
+    const mine = current === currentUser.firstName;
+    const locked = limited && current && !mine;
+    const list = limited ? [currentUser.firstName].concat(locked ? [current] : []) : people;
+    const options = [...new Set(list)].map(p =>
       `<option value="${esc(p)}" ${p === current ? 'selected' : ''}>${esc(p)}${p === currentUser.firstName ? ' (you)' : ''}</option>`
     ).join('') + `<option value="" ${!current ? 'selected' : ''}>No one assigned</option>`;
     return `
       <div class="form-group">
         <label class="form-label">${CAREGIVER_DAY_LABELS[d]}</label>
-        <select class="form-input" id="coverage-select-${d}">${options}</select>
+        <select class="form-input" id="coverage-select-${d}" ${locked ? 'disabled' : ''}>${options}</select>
       </div>`;
   }).join('');
   document.getElementById('coverage-modal').classList.add('open');
@@ -1953,7 +2202,9 @@ function closeCoverageModal() {
 async function submitCoverage() {
   const payload = {};
   CAREGIVER_DAYS.forEach(d => {
-    payload[d] = document.getElementById('coverage-select-' + d).value || null;
+    const el = document.getElementById('coverage-select-' + d);
+    if (el.disabled) { payload[d] = caregiverShifts[d] || null; return; }
+    payload[d] = el.value || null;
   });
   try {
     caregiverShifts = await callApi('updateCoverage', { coverage: payload });
@@ -2150,7 +2401,7 @@ async function finishOnboardingImpl() {
   showBusy(obEditMode ? 'Saving…' : 'Setting things up…');
   let data;
   try {
-    data = await callApi('finishOnboarding', { summary: summaryPayload, contacts, meds: obEditMode ? [] : obMeds });
+    data = await callApi('finishOnboarding', { summary: summaryPayload, contacts, meds: obEditMode ? [] : obMeds, replaceContacts: obEditMode ? true : undefined });
   } catch (err) {
     hideBusy();
     showToast(err.message);
@@ -2175,6 +2426,7 @@ async function finishOnboardingImpl() {
 }
 
 async function editHealthSummary() {
+  if (!can('manageHealth')) { showToast('Only caregivers can edit the emergency card'); return; }
   closeSettings();
   obEditMode = true;
   document.getElementById('ob-skip').style.display = 'none';
@@ -2217,16 +2469,63 @@ function enterApp() {
   document.getElementById('app').style.display = 'flex';
   document.getElementById('fab').style.display = 'flex';
   document.getElementById('header-badge').textContent = currentFamily ? currentFamily.name : '';
-  document.getElementById('greeting-text').textContent = greetingPrefix() + ', ' + currentUser.firstName;
+  renderGreeting();
   document.getElementById('settings-account-name').textContent = currentUser.fullName;
   document.getElementById('settings-account-email').textContent = currentUser.email;
   document.getElementById('settings-account-role').textContent = roleLabel(currentUser.role);
+  applyRoleUI();
   goTo('home');
 }
 function roleLabel(role) {
   if (role === 'primary_caregiver') return 'Primary caregiver';
+  if (role === 'caregiver') return 'Caregiver';
   if (role === 'family_member') return 'Family member';
+  if (role === 'viewer') return 'Viewer (view only)';
   return 'Member';
+}
+const ROLE_HELP = {
+  caregiver: 'Caregiver: can manage medications, the emergency card, appointments and shifts.',
+  family_member: 'Family member: sees everything, marks doses taken, adds appointments and posts updates.',
+  viewer: 'Viewer: can see everything but can\'t change anything.'
+};
+/* Mirrors the server's permission table. The server enforces it either way;
+   this only hides buttons people can't use. */
+const ROLE_PERMS = {
+  manageMedications: ['primary_caregiver', 'caregiver'],
+  manageHealth: ['primary_caregiver', 'caregiver'],
+  manageAppointments: ['primary_caregiver', 'caregiver'],
+  addAppointment: ['primary_caregiver', 'caregiver', 'family_member'],
+  confirmMeds: ['primary_caregiver', 'caregiver', 'family_member'],
+  post: ['primary_caregiver', 'caregiver', 'family_member'],
+  invite: ['primary_caregiver', 'caregiver'],
+  manageMembers: ['primary_caregiver'],
+  editShifts: ['primary_caregiver', 'caregiver', 'family_member']
+};
+function can(perm) {
+  return !!(currentUser && (ROLE_PERMS[perm] || []).indexOf(currentUser.role) !== -1);
+}
+/* Show/hide the controls that depend on the signed-in person's role. */
+function applyRoleUI() {
+  if (!currentUser) return;
+  const show = (sel, on, disp) => document.querySelectorAll(sel).forEach(el => { el.style.display = on ? (disp || '') : 'none'; });
+  show('[data-perm-row="manageHealth"]', can('manageHealth'), 'flex');
+  show('[data-perm-row="invite"]', can('invite'), 'flex');
+  document.querySelectorAll('[data-perm]').forEach(el => { el.style.display = can(el.getAttribute('data-perm')) ? '' : 'none'; });
+  const note = document.getElementById('viewer-banner');
+  if (note) {
+    note.style.display = currentUser.role === 'viewer' ? 'block' : 'none';
+  }
+  goToFabRefresh();
+}
+function fabAllowedOn(screen) {
+  if (screen === 'meds') return can('manageMedications');
+  if (screen === 'calendar') return can('addAppointment');
+  if (screen === 'feed' || screen === 'home') return can('post');
+  return false;
+}
+function goToFabRefresh() {
+  const fab = document.getElementById('fab');
+  if (fab && currentScreen) fab.style.display = fabAllowedOn(currentScreen) ? 'flex' : 'none';
 }
 
 async function attemptSessionRestore() {
@@ -2247,6 +2546,12 @@ async function attemptSessionRestore() {
 let inviteToken = null;
 async function startApp() {
   const params = new URLSearchParams(window.location.search);
+  const sharedCardToken = params.get('card');
+  if (sharedCardToken) {
+    document.getElementById('session-restore-screen').classList.remove('show');
+    await showSharedCard(sharedCardToken);
+    return;
+  }
   inviteToken = params.get('invite');
   if (inviteToken) {
     try {
@@ -2274,6 +2579,8 @@ async function showJoinFamilyScreen(token) {
   const info = await callApi('getInviteInfo', { token });
   inviteToken = token;
   document.getElementById('join-family-subtitle').textContent = `You've been invited to join "${info.familyName}"`;
+  const jr = document.getElementById('join-role-note');
+  if (jr) jr.textContent = ROLE_HELP[info.role || 'family_member'] || '';
   document.getElementById('join-name').value = info.name;
   document.getElementById('join-email').value = info.email;
   document.getElementById('join-family-screen').style.display = 'flex';
@@ -2285,7 +2592,7 @@ async function submitJoinFamily() {
   const confirm = document.getElementById('join-confirm').value;
   const errEl = document.getElementById('join-error');
   errEl.classList.remove('show');
-  if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters'; errEl.classList.add('show'); return; }
+  if (password.length < 8) { errEl.textContent = 'Password must be at least 8 characters'; errEl.classList.add('show'); return; }
   if (password !== confirm) { errEl.textContent = 'Passwords do not match'; errEl.classList.add('show'); return; }
 
   joinSubmitInFlight = true;
@@ -2335,7 +2642,9 @@ function applyBootstrap(d) {
   renderCal();
   renderFeed();
   renderEmergencyCard();
-  document.getElementById('home-alert-banner').style.display = 'none';
+  renderGreeting();
+  renderAlerts();
+  renderAdherence();
 }
 
 // One request returns everything (it used to be 8 separate ones).
@@ -2389,6 +2698,9 @@ function renderEmergencyCard() {
   document.getElementById('em-ins-carrier').textContent = (s && s.insuranceCarrier) || '—';
   document.getElementById('em-ins-policy').textContent = (s && s.insurancePolicy) || '—';
   document.getElementById('em-ins-group').textContent = (s && s.insuranceGroup) || '—';
+  document.getElementById('em-updated').textContent = (s && s.updatedAt)
+    ? 'Last updated ' + new Date(s.updatedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) + '.'
+    : '';
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -2508,10 +2820,15 @@ function medEndDateLabel(m) {
   const label = new Date(m.endDate + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   return isMedExpired(m) ? 'Course ended ' + label : 'Until ' + label;
 }
+function sortedTimes(m) {
+  return [...(m.times || [])].sort((x, y) => (timeLabelToMinutes(x) ?? 1e9) - (timeLabelToMinutes(y) ?? 1e9));
+}
 function medCardHTML(m) {
-  const chips = m.times.map(t => `<span class="time-chip">${esc(t)}</span>`).join('');
-  const firstTime = m.times[0];
-  const done = isConfirmedToday(m.id, firstTime);
+  const times = sortedTimes(m);
+  const chips = times.map(tm => `<span class="time-chip${isConfirmedToday(m.id, tm) ? ' confirmed' : ''}">${esc(tm)}</span>`).join('');
+  const next = times.find(tm => !isConfirmedToday(m.id, tm)) || null;
+  const done = !next;
+  const label = done ? 'Confirmed' : (times.length > 1 ? 'Taken · ' + next : 'Taken');
   return `
     <div class="med-card" id="med-${esc(m.id)}">
       <div class="med-card-header">
@@ -2525,11 +2842,15 @@ function medCardHTML(m) {
       </div>
       <div class="med-card-footer">
         <div class="med-times">${chips}</div>
-        <button class="take-btn${done ? ' done' : ''}" ${done ? 'disabled' : ''} data-id="${esc(m.id)}" data-slot="${esc(firstTime)}" onclick="confirmMedBtn(this)">
+        ${can('confirmMeds') ? `<button class="take-btn${done ? ' done' : ''}" ${done ? 'disabled' : ''} data-id="${esc(m.id)}" data-slot="${esc(next || '')}" onclick="confirmMedBtn(this)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          ${done ? 'Confirmed' : 'Taken'}
-        </button>
+          ${esc(label)}
+        </button>` : `<span class="pill ${done ? 'pill-slate' : 'pill-amber'}">${done ? 'Confirmed' : 'Not confirmed yet'}</span>`}
       </div>
+      ${can('manageMedications') ? `<div style="display:flex;gap:8px;padding:12px 16px 16px;">
+        <button class="btn btn-secondary btn-sm" style="flex:1;" onclick="openMedModal('${esc(m.id)}')">Edit</button>
+        <button class="btn btn-danger btn-sm" style="flex:1;" onclick="deleteMedUi('${esc(m.id)}')">Delete</button>
+      </div>` : ''}
     </div>`;
 }
 
@@ -2537,13 +2858,13 @@ function renderMedsScreen() {
   const box = document.getElementById('meds-dynamic');
   const seniorName = (healthSummary && healthSummary.name && healthSummary.name !== 'Not added yet') ? healthSummary.name : 'Your family member';
   document.getElementById('meds-subtitle').textContent = seniorName + ' • ' + medications.length + (medications.length === 1 ? ' active' : ' active');
-  document.getElementById('meds-adherence').textContent = '—';
+  renderAdherence();
 
   if (!medications.length) {
     box.innerHTML = `
       <div class="card" style="text-align:center;padding:32px 20px;">
         <div style="font-size:15px;color:var(--text-secondary);margin-bottom:14px;">No medications added yet.</div>
-        <button class="btn btn-primary" onclick="document.getElementById('med-modal').classList.add('open')">+ Add</button>
+        ${can('manageMedications') ? `<button class="btn btn-primary" onclick="openMedModal()">+ Add</button>` : ''}
       </div>
       <div style="height:16px;"></div>`;
     return;
@@ -2563,12 +2884,14 @@ function renderMedsScreen() {
 function renderHomeMeds() {
   const box = document.getElementById('home-meds-card');
   document.getElementById('stat-med-count').textContent = medications.length;
+  const slotsToday = todaySlots();
+  const takenToday = slotsToday.filter(s => s.confirmed).length;
   document.getElementById('stat-med-sub').innerHTML = medications.length
-    ? `<span class="stat-dot" style="background:var(--sage)"></span>${medications.length} scheduled today`
-    : 'Tap to add medications';
+    ? `<span class="stat-dot" style="background:${slotsToday.length && takenToday === slotsToday.length ? 'var(--success)' : 'var(--sage)'}"></span>${takenToday} of ${slotsToday.length} taken today`
+    : (can('manageMedications') ? 'Tap to add medications' : 'None added yet');
 
   if (!medications.length) {
-    box.innerHTML = `<div style="padding:8px 0;font-size:14px;color:var(--text-secondary);text-align:center;">No medications added yet.<br><button onclick="document.getElementById('med-modal').classList.add('open')" style="background:none;border:none;color:var(--sage);font-weight:700;cursor:pointer;font-family:var(--font);margin-top:4px;">+ Add a medication</button></div>`;
+    box.innerHTML = `<div style="padding:8px 0;font-size:14px;color:var(--text-secondary);text-align:center;">No medications added yet.${can('manageMedications') ? `<br><button onclick="openMedModal()" style="background:none;border:none;color:var(--sage);font-weight:700;cursor:pointer;font-family:var(--font);margin-top:4px;">+ Add a medication</button>` : ''}</div>`;
     return;
   }
   box.innerHTML = medications.slice(0, 4).map(m => `
@@ -2579,7 +2902,7 @@ function renderHomeMeds() {
         <div class="med-dose">${esc(m.reason) || 'Scheduled'}</div>
       </div>
       <div>
-        <span class="pill pill-amber"><span class="pill-dot"></span>Due ${esc(m.times[0])}</span>
+        ${duePillHTML(m)}
       </div>
     </div>`).join('');
 }
@@ -2597,16 +2920,88 @@ function renderEmergencyMeds() {
 
 function confirmMedBtn(btn) { return confirmMed(btn.dataset.id, btn.dataset.slot, btn); }
 async function confirmMed(id, timeSlot, btn) {
+  if (!timeSlot) return;
+  if (btn) btn.disabled = true;
   try {
     const confirmation = await callApi('confirmMedication', { id, timeSlot });
     medConfirmations.push(confirmation);
-    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Confirmed';
-    btn.classList.add('done');
-    btn.disabled = true;
+    refreshMedViews();
     showToast('✓ Medication confirmed');
   } catch (err) {
+    if (btn) btn.disabled = false;
     showToast(err.message);
   }
+}
+
+/* ── Today's doses, alerts and adherence (all computed from real data) ── */
+function todaySlots() {
+  const out = [];
+  (medications || []).forEach(m => {
+    if (isMedExpired(m)) return;
+    (m.times || []).forEach(slot => out.push({ med: m, slot, minutes: timeLabelToMinutes(slot), confirmed: isConfirmedToday(m.id, slot) }));
+  });
+  return out;
+}
+function duePillHTML(m) {
+  const next = sortedTimes(m).find(tm => !isConfirmedToday(m.id, tm));
+  return next
+    ? `<span class="pill pill-amber"><span class="pill-dot"></span>Due ${esc(next)}</span>`
+    : `<span class="pill pill-green"><span class="pill-dot"></span>Taken</span>`;
+}
+function careName() {
+  const n = healthSummary && healthSummary.name;
+  return (n && n !== 'Not added yet') ? n.split(/\s+/)[0] : null;
+}
+function agoLabel(min) {
+  if (min < 60) return min + ' minutes ago';
+  const h = Math.round(min / 60);
+  return 'about ' + h + (h === 1 ? ' hour ago' : ' hours ago');
+}
+function overdueDoses() {
+  const now = nowMinutesInTimezone(getStoredTimezone());
+  return todaySlots()
+    .filter(s => !s.confirmed && s.minutes !== null && now - s.minutes >= 30)
+    .sort((a, b) => a.minutes - b.minutes)
+    .map(s => Object.assign({}, s, { lateMin: now - s.minutes }));
+}
+function renderAlerts() {
+  const banner = document.getElementById('home-alert-banner');
+  if (!banner) return;
+  const late = overdueDoses();
+  const dot = document.getElementById('meds-tab-dot');
+  if (dot) dot.classList.toggle('show', late.length > 0);
+  if (!late.length) { banner.style.display = 'none'; return; }
+  const first = late[0];
+  const who = careName();
+  document.getElementById('home-alert-title').textContent =
+    late.length === 1 ? first.med.name + ' not confirmed' : late.length + ' doses not confirmed';
+  document.getElementById('home-alert-text').textContent = late.length === 1
+    ? (who ? who + '\u2019s ' : 'The ') + first.slot + ' dose was due ' + agoLabel(first.lateMin) + '.'
+    : 'Oldest: ' + first.med.name + ' at ' + first.slot + ', due ' + agoLabel(first.lateMin) + '.';
+  banner.style.display = 'flex';
+}
+function renderAdherence() {
+  const box = document.getElementById('adherence-box');
+  if (!box) return;
+  const now = nowMinutesInTimezone(getStoredTimezone());
+  const counted = todaySlots().filter(s => s.confirmed || s.minutes === null || s.minutes <= now);
+  if (!counted.length) { box.style.display = 'none'; return; }
+  document.getElementById('meds-adherence').textContent = Math.round(counted.filter(s => s.confirmed).length / counted.length * 100) + '%';
+  box.style.display = 'block';
+}
+function renderGreeting() {
+  if (!currentUser) return;
+  const who = careName();
+  document.getElementById('greeting-text').textContent = greetingPrefix() + ', ' + currentUser.firstName;
+  const day = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric', timeZone: getStoredTimezone() });
+  document.getElementById('greeting-sub').textContent = day + ' \u2022 ' + (who ? who + '\u2019s care overview' : 'Your family\u2019s care overview');
+}
+function refreshMedViews() {
+  renderMedsScreen();
+  renderHomeMeds();
+  renderAlerts();
+  renderAdherence();
+  if (document.getElementById('senior-overlay').style.display === 'block') renderSeniorMode();
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -2614,7 +3009,7 @@ async function confirmMed(id, timeSlot, btn) {
 ═══════════════════════════════════════════════════════════ */
 let appointments = [];
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-let calYear = 2026, calMonth = 8;
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
 
 function apptFromApi(a) {
   const d = new Date(a.date + 'T00:00:00');
@@ -2624,10 +3019,27 @@ function apptFromApi(a) {
     id: a.id, title: a.title,
     dateKey: d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(),
     dateLabel: dayNames[d.getDay()] + ' ' + monNames[d.getMonth()] + ' ' + d.getDate(),
-    time: a.time, provider: a.provider, location: a.location, notes: a.notes, who: a.who,
+    time: a.time, provider: a.provider, location: a.location, notes: a.notes, who: a.who, createdBy: a.createdBy || null,
   };
 }
 
+// Caregivers manage every appointment; family members only the ones they added.
+function canManageAppt(a) {
+  if (!a) return false;
+  return can('manageAppointments') || (can('addAppointment') && !!a.createdBy && a.createdBy === currentUser.id);
+}
+function apptButtonsHTML(id, mt) {
+  if (!canManageAppt(appointments.find(x => x.id === id))) return '';
+  return `<div style="display:flex;gap:8px;margin-top:${mt}px;">
+    <button class="btn btn-secondary btn-sm" style="width:auto;" onclick="openApptModal('${esc(id)}')">Edit</button>
+    <button class="btn btn-danger btn-sm" style="width:auto;" onclick="cancelAppointmentUi('${esc(id)}')">Cancel</button>
+  </div>`;
+}
+async function cancelAppointmentUi(id) {
+  const a = appointments.find(x => x.id === id);
+  if (!await askConfirm('Cancel ' + (a ? a.title : 'this appointment') + '?', 'It will be removed from everyone\'s calendar.', 'Cancel appointment')) return;
+  await cancelAppointment(id);
+}
 function eventItemHTML(a) {
   return `
     <div class="event-item" id="row-${esc(a.id)}">
@@ -2640,7 +3052,7 @@ function eventItemHTML(a) {
         <div class="event-title">${esc(a.title)}</div>
         <div class="event-sub">${esc([a.provider, a.location].filter(Boolean).join(' • '))}</div>
         ${a.notes ? `<div class="event-note">${esc(a.notes)}</div>` : ''}
-        <button class="btn btn-danger btn-sm" style="margin-top:10px;width:auto;" onclick="cancelAppointment('${esc(a.id)}')">Cancel</button>
+        ${apptButtonsHTML(a.id, 10)}
       </div>
     </div>`;
 }
@@ -2677,7 +3089,7 @@ function renderNextAppt() {
       <div style="font-size:14px;color:var(--text-secondary);margin-top:4px;">${esc([next.provider, next.time].filter(Boolean).join(' • '))}</div>
       ${next.location ? `<div style="font-size:14px;color:var(--text-muted);margin-top:2px;">${esc(next.location)}</div>` : ''}
       ${next.notes ? `<div style="margin-top:10px;font-size:13px;color:var(--amber);font-weight:600;">Reminder: ${esc(next.notes)}</div>` : ''}
-      <button class="btn btn-danger btn-sm" style="margin-top:12px;width:auto;" onclick="cancelAppointment('${esc(next.id)}')">Cancel</button>
+      ${apptButtonsHTML(next.id, 12)}
     </div>
     <div style="text-align:right;flex-shrink:0;margin-left:12px;">
       <div class="t-title" style="font-size:22px;color:var(--navy);">${dayNames[dow]}</div>
@@ -2769,7 +3181,7 @@ function openApptDetailModal(key) {
       ${a.location ? `<div class="appt-detail-meta">${esc(a.location)}</div>` : ''}
       ${a.notes ? `<div class="appt-detail-note">${esc(a.notes)}</div>` : ''}
       ${a.who ? `<div class="appt-detail-meta">${esc(a.who)} is taking them</div>` : ''}
-      <button class="btn btn-danger btn-sm" style="margin-top:12px;width:auto;" onclick="cancelAppointment('${esc(a.id)}')">Cancel</button>
+      ${apptButtonsHTML(a.id, 12)}
     </div>`).join('');
   document.getElementById('appt-detail-modal').classList.add('open');
 }
@@ -2789,6 +3201,36 @@ function changeMonth(dir) {
    FAMILY FEED
 ═══════════════════════════════════════════════════════════ */
 let feedPosts = [];
+
+function reactButtonHTML(post) {
+  const rs = post.reactions || [];
+  const mine = rs.some(r => r.userId === currentUser.id);
+  const names = rs.map(r => r.userId === currentUser.id ? 'You' : r.firstName).join(', ');
+  const heart = `<svg width="18" height="18" viewBox="0 0 24 24" fill="${mine ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+  const label = rs.length ? String(rs.length) : 'React';
+  const style = mine ? ' style="color:var(--red);"' : '';
+  if (!can('post')) return rs.length ? `<span class="feed-action-btn" style="cursor:default;" title="${esc(names)}">${heart}${label}</span>` : '';
+  return `<button class="feed-action-btn react-btn${mine ? ' reacted' : ''}"${style} title="${esc(names)}" aria-pressed="${mine}" onclick="toggleReactionUi('${esc(post.id)}')">${heart}${label}</button>`;
+}
+async function toggleReactionUi(postId) {
+  const post = feedPosts.find(x => x.id === postId);
+  if (!post) return;
+  const had = (post.reactions || []).some(r => r.userId === currentUser.id);
+  // optimistic: flip right away, roll back if the server says no
+  post.reactions = had
+    ? post.reactions.filter(r => r.userId !== currentUser.id)
+    : (post.reactions || []).concat([{ userId: currentUser.id, firstName: currentUser.firstName }]);
+  renderFeed();
+  try {
+    await callApi('toggleReaction', { postId });
+  } catch (err) {
+    post.reactions = had
+      ? (post.reactions || []).concat([{ userId: currentUser.id, firstName: currentUser.firstName }])
+      : post.reactions.filter(r => r.userId !== currentUser.id);
+    renderFeed();
+    showToast(err.message);
+  }
+}
 
 function feedPostHTML(post) {
   const initial = (post.user ? post.user.firstName : '?').charAt(0).toUpperCase();
@@ -2814,14 +3256,11 @@ function feedPostHTML(post) {
         <span class="feed-tag">${esc(post.tag)}</span><br>${esc(post.content)}
       </div>
       <div class="feed-actions">
-        <button class="feed-action-btn" onclick="showToast('❤️ Reaction added')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          React
-        </button>
-        <button class="feed-action-btn" onclick="openComment('${esc(post.id)}')">
+        ${reactButtonHTML(post)}
+        ${can('post') ? `<button class="feed-action-btn" onclick="openComment('${esc(post.id)}')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           Comment
-        </button>
+        </button>` : ''}
       </div>
       ${comments ? `<div class="feed-comments">${comments}</div>` : ''}
     </div>`;
@@ -2838,6 +3277,7 @@ function renderFeed() {
 
 let activeCommentPostId = null;
 function openComment(postId) {
+  if (!can('post')) { showToast('You have view-only access'); return; }
   activeCommentPostId = postId || null;
   document.getElementById('modal-title').textContent = activeCommentPostId ? 'Add comment' : 'New post';
   document.getElementById('post-modal').classList.add('open');
@@ -2868,8 +3308,53 @@ async function submitPost() {
 /* ══════════════════════════════════════════════════════════
    ADD MEDICATION MODAL (Meds tab)
 ═══════════════════════════════════════════════════════════ */
+let editingMedId = null;
+function openMedModal(id) {
+  if (!can('manageMedications')) { showToast('Only caregivers can change medications'); return; }
+  editingMedId = id || null;
+  const m = id ? medications.find(x => x.id === id) : null;
+  document.getElementById('med-modal-title').textContent = m ? 'Edit medication' : 'Add medication';
+  document.getElementById('med-submit-btn').textContent = m ? 'Save' : 'Add';
+  if (m) {
+    document.getElementById('med-name-input').value = m.name || '';
+    document.getElementById('med-dose-input').value = parseFloat(m.dose) || '';
+    document.getElementById('med-reason-input').value = m.reason || '';
+    document.getElementById('med-pharmacy-input').value = m.pharmacy || '';
+    if (medEndDatePicker) { m.endDate ? medEndDatePicker.setDate(m.endDate) : medEndDatePicker.clear(); }
+    const list = document.getElementById('med-times-list');
+    destroyPickersIn(list); list.innerHTML = '';
+    sortedTimes(m).forEach(t => addMedTimeRow(label12To24(t)));
+    if (!list.children.length) addMedTimeRow('08:00');
+  } else {
+    ['med-name-input','med-dose-input','med-reason-input','med-pharmacy-input'].forEach(i => { document.getElementById(i).value = ''; });
+    if (medEndDatePicker) medEndDatePicker.clear();
+    resetMedTimeRows();
+  }
+  document.getElementById('med-modal').classList.add('open');
+}
+function label12To24(label) {
+  const mm = /^\s*(\d{1,2}):(\d{2})\s*(AM|PM)\s*$/i.exec(label || '');
+  if (!mm) return '';
+  let h = parseInt(mm[1], 10) % 12;
+  if (mm[3].toUpperCase() === 'PM') h += 12;
+  return String(h).padStart(2, '0') + ':' + mm[2];
+}
 function closeMedModal() {
   document.getElementById('med-modal').classList.remove('open');
+  editingMedId = null;
+}
+async function deleteMedUi(id) {
+  const m = medications.find(x => x.id === id);
+  if (!await askConfirm('Delete ' + (m ? m.name : 'this medication') + '?', 'Its reminders and dose history for today will be removed.', 'Delete')) return;
+  try {
+    await callApi('deleteMedication', { id });
+    medications = medications.filter(x => x.id !== id);
+    refreshMedViews();
+    renderEmergencyMeds();
+    renderMedsScreen();
+    renderHomeMeds();
+    showToast('Medication deleted');
+  } catch (err) { showToast(err.message); }
 }
 function addMedTimeRow(value) {
   const list = document.getElementById('med-times-list');
@@ -2910,7 +3395,9 @@ async function submitMed() {
   const btn = document.getElementById('med-submit-btn');
   btn.disabled = true;
   try {
-    await callApi('addMedication', { name, doseValueMg: doseNum, times, reason: reason || undefined, pharmacy: pharmacy || undefined, endDate: endDate || undefined });
+    if (editingMedId) await callApi('updateMedication', { id: editingMedId, name, doseValueMg: doseNum, times, reason: reason || '', pharmacy: pharmacy || '', endDate: endDate || '' });
+    else await callApi('addMedication', { name, doseValueMg: doseNum, times, reason: reason || undefined, pharmacy: pharmacy || undefined, endDate: endDate || undefined });
+    const wasEdit = !!editingMedId;
     medications = await callApi('getMedications');
     renderMedsScreen();
     renderHomeMeds();
@@ -2919,7 +3406,8 @@ async function submitMed() {
     if (medEndDatePicker) medEndDatePicker.clear();
     resetMedTimeRows();
     closeMedModal();
-    showToast('Medication added');
+    refreshMedViews();
+    showToast(wasEdit ? 'Medication updated' : 'Medication added');
   } catch (err) {
     showToast(err.message);
   } finally {
@@ -2931,8 +3419,35 @@ async function submitMed() {
 /* ══════════════════════════════════════════════════════════
    ADD APPOINTMENT MODAL (Calendar tab)
 ═══════════════════════════════════════════════════════════ */
+let editingApptId = null;
+function openApptModal(id) {
+  if (id ? !canManageAppt(appointments.find(x => x.id === id)) : !can('addAppointment')) { showToast('You can only change appointments you added'); return; }
+  closeApptDetailModal();
+  editingApptId = id || null;
+  populateApptWho();
+  const a = id ? appointments.find(x => x.id === id) : null;
+  document.getElementById('appt-modal-title').textContent = a ? 'Edit appointment' : 'Add appointment';
+  document.getElementById('appt-submit-btn').textContent = a ? 'Save' : 'Add';
+  if (a) {
+    document.getElementById('appt-title-input').value = a.title || '';
+    document.getElementById('appt-provider-input').value = a.provider || '';
+    document.getElementById('appt-notes-input').value = a.notes || '';
+    const [y, mo, d] = a.dateKey.split('-');
+    if (apptDatePicker) apptDatePicker.setDate(y + '-' + String(mo).padStart(2, '0') + '-' + String(d).padStart(2, '0'));
+    if (apptTimePicker) apptTimePicker.set(label12To24(a.time));
+    const sel = document.getElementById('appt-who-input');
+    sel.value = a.who || 'TBD';
+    if (sel.value !== (a.who || 'TBD')) sel.value = 'TBD';
+  } else {
+    ['appt-title-input','appt-provider-input','appt-notes-input'].forEach(i => { document.getElementById(i).value = ''; });
+    if (apptDatePicker) apptDatePicker.clear();
+    if (apptTimePicker) apptTimePicker.clear();
+  }
+  document.getElementById('appt-modal').classList.add('open');
+}
 function closeApptModal() {
   document.getElementById('appt-modal').classList.remove('open');
+  editingApptId = null;
 }
 
 let fpRequestInFlight = false;
@@ -3013,7 +3528,7 @@ async function submitPasswordReset() {
   const code = document.getElementById('fp-code').value.trim();
   const newPassword = document.getElementById('fp-new-password').value;
   if (!code) { showFpError('Enter the code from your email'); return; }
-  if (newPassword.length < 6) { showFpError('Password must be at least 6 characters'); return; }
+  if (newPassword.length < 8) { showFpError('Password must be at least 8 characters'); return; }
   fpResetInFlight = true;
   const btn = document.getElementById('fp-reset-btn');
   btn.disabled = true;
@@ -3046,7 +3561,14 @@ async function submitAppt() {
     : undefined;
 
   try {
-    const created = await callApi('addAppointment', { title, date: dateVal, time: timeLabel, provider: provider || undefined, notes: notes || undefined, who: who !== 'TBD' ? who : undefined });
+    let created;
+    if (editingApptId) {
+      created = await callApi('updateAppointment', { id: editingApptId, title, date: dateVal, time: timeLabel || '', provider, notes, who: who !== 'TBD' ? who : '' });
+      appointments = appointments.filter(x => x.id !== editingApptId);
+    } else {
+      created = await callApi('addAppointment', { title, date: dateVal, time: timeLabel, provider: provider || undefined, notes: notes || undefined, who: who !== 'TBD' ? who : undefined });
+    }
+    const wasEdit = !!editingApptId;
     appointments.push(apptFromApi(created));
     renderCal();
     renderApptList();
@@ -3055,7 +3577,7 @@ async function submitAppt() {
     if (apptDatePicker) apptDatePicker.clear();
     if (apptTimePicker) apptTimePicker.clear();
     closeApptModal();
-    showToast('Appointment added to calendar');
+    showToast(wasEdit ? 'Appointment updated' : 'Appointment added to calendar');
   } catch (err) {
     showToast(err.message);
   }
@@ -3180,6 +3702,7 @@ function fireReminderIfDue(m, timeLabel, dueMin, nowMin, todayKey, phase, minute
 }
 
 setInterval(checkMedicationReminders, 30000);
+setInterval(() => { if (currentUser) { renderAlerts(); renderAdherence(); } }, 60000);
 
 function toggleLargeText() {
   const on = document.documentElement.getAttribute('data-large-text') === 'true';
@@ -3213,7 +3736,6 @@ function logOut() {
   document.getElementById('app').style.display = 'none';
   document.getElementById('fab').style.display = 'none';
   document.getElementById('onboarding-screen').style.display = 'none';
-  document.getElementById('plan-screen').style.display = 'none';
   document.getElementById('invite-screen').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
   switchAuthTab('login');
@@ -3252,14 +3774,46 @@ function clearOnboardingFields() {
 ═══════════════════════════════════════════════════════════ */
 function switchToSeniorMode() {
   closeSettings();
-  document.getElementById('senior-contact-footer').innerHTML = `If you have a question, ask ${esc(currentUser.firstName)}`;
-  setTimeout(() => document.getElementById('senior-overlay').style.display = 'block', 200);
+  renderSeniorMode();
+  setTimeout(() => { document.getElementById('senior-overlay').style.display = 'block'; }, 200);
 }
 function closeSeniorMode() { document.getElementById('senior-overlay').style.display = 'none'; }
-function seniorConfirm(btn) {
-  btn.style.background = 'var(--success)';
-  btn.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Done — thank you!';
-  btn.disabled = true;
+async function seniorConfirmBtn(btn) { await confirmMed(btn.dataset.id, btn.dataset.slot, btn); }
+
+function renderSeniorMode() {
+  const now = nowMinutesInTimezone(getStoredTimezone());
+  const slots = todaySlots().sort((a, b) => (a.minutes ?? 1e9) - (b.minutes ?? 1e9));
+  const base = 'width:100%;min-height:72px;border:none;border-radius:18px;font-size:22px;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:12px;';
+  const check = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>';
+  document.getElementById('senior-list').innerHTML = slots.length ? slots.map(s => {
+    const future = s.minutes !== null && s.minutes > now;
+    let button;
+    if (s.confirmed) button = `<button disabled style="${base}background:var(--success);color:white;cursor:default;">${check}Confirmed \u2713</button>`;
+    else if (future) button = `<button disabled style="${base}background:var(--slate);color:var(--text-muted);cursor:default;">Not yet \u2014 ${esc(s.slot)}</button>`;
+    else if (!can('confirmMeds')) button = `<button disabled style="${base}background:var(--slate);color:var(--text-muted);cursor:default;">View only</button>`;
+    else button = `<button data-id="${esc(s.med.id)}" data-slot="${esc(s.slot)}" onclick="seniorConfirmBtn(this)" style="${base}background:var(--sage);color:white;cursor:pointer;">${check}I took it</button>`;
+    return `<div style="background:var(--card);border-radius:20px;padding:24px;margin-bottom:14px;box-shadow:var(--shadow);">
+      <div class="t-sub" style="font-size:13px;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:8px;">${esc(s.slot)}</div>
+      <div class="t-title" style="font-size:28px;color:var(--navy);margin-bottom:4px;">${esc(s.med.name)}</div>
+      <div style="font-size:20px;color:var(--text-secondary);margin-bottom:20px;">${esc(s.med.dose)}</div>
+      ${button}
+    </div>`;
+  }).join('') : `<div style="background:var(--card);border-radius:20px;padding:24px;box-shadow:var(--shadow);text-align:center;font-size:20px;color:var(--text-secondary);">No medications scheduled for today.</div>`;
+
+  const c = emergencyContacts.find(x => x.isPrimary) || emergencyContacts[0];
+  const footer = document.getElementById('senior-contact-footer');
+  if (c) {
+    const tel = String((c.countryCode || '') + (c.phone || '')).replace(/[^\d+]/g, '');
+    footer.innerHTML = `If you have a question, call ${esc(c.name)}<a class="t-sub" href="tel:${esc(tel)}" style="font-size:20px;text-decoration:none;display:block;margin-top:8px;">${esc(c.countryCode)} ${esc(c.phone)}</a>`;
+  } else {
+    footer.textContent = 'If you have a question, ask ' + currentUser.firstName;
+  }
+}
+
+// "Who's taking them?" lists the real family members (plus TBD).
+function populateApptWho() {
+  const sel = document.getElementById('appt-who-input');
+  sel.innerHTML = getAssignablePeople().map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('') + '<option value="TBD">TBD</option>';
 }
 
 /* ══════════════════════════════════════════════════════════
