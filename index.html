@@ -1647,6 +1647,12 @@ function answerConfirm(yes) {
 /* ══════════════════════════════════════════════════════════
    AUTH STATE
 ═══════════════════════════════════════════════════════════ */
+/* Date-only values should be YYYY-MM-DD. If a spreadsheet ever hands back a full
+   timestamp ("1940-05-01T00:00:00.000Z"), keep just the date part. */
+function ymd(v) {
+  const m = /^(\d{4}-\d{2}-\d{2})/.exec(String(v == null ? '' : v));
+  return m ? m[1] : '';
+}
 let currentUser = null;   // { id, email, fullName, firstName, role }
 let currentFamily = null; // { id, name, plan }
 let pendingInviteDrafts = []; // invites collected on the onboarding invite screen, sent on Continue
@@ -1988,7 +1994,7 @@ async function showSharedCard(token) {
     const c = await callApi('getSharedCard', { card: token });
     const allergies = (c.allergies || '').split(',').map(a => a.trim()).filter(Boolean);
     let age = '';
-    if (c.dob) { const d = new Date(c.dob + 'T00:00:00'); age = 'Born ' + d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ' • Age ' + Math.floor((Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000)); }
+    if (ymd(c.dob)) { const d = new Date(ymd(c.dob) + 'T00:00:00'); age = 'Born ' + d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ' • Age ' + Math.floor((Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000)); }
     const tel = x => String((x.countryCode || '') + (x.phone || '')).replace(/[^\d+]/g, '');
     box.innerHTML = `
       <div class="sc-name">${esc(c.name)}</div>
@@ -2433,7 +2439,7 @@ async function editHealthSummary() {
   document.getElementById('ob-dot-2').style.display = 'none';
   const s = healthSummary || {};
   document.getElementById('ob-name').value = (s.name && s.name !== 'Not added yet') ? s.name : '';
-  if (dobPicker) dobPicker.setDate(s.dob || null);
+  if (dobPicker) dobPicker.setDate(ymd(s.dob) || null);
   document.getElementById('ob-blood').value = s.bloodType || '';
   document.getElementById('ob-weight-value').value = s.weightValue != null ? s.weightValue : '';
   document.getElementById('ob-weight-unit').value = s.weightUnit || 'lbs';
@@ -2673,8 +2679,8 @@ function renderEmergencyCard() {
   document.getElementById('em-name').textContent = s ? s.name : 'Not added yet';
 
   let dobLabel = 'Date of birth not added';
-  if (s && s.dob) {
-    const d = new Date(s.dob + 'T00:00:00');
+  if (s && ymd(s.dob)) {
+    const d = new Date(ymd(s.dob) + 'T00:00:00');
     const age = Math.floor((Date.now() - d.getTime()) / (365.25 * 24 * 3600 * 1000));
     dobLabel = 'Born ' + d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) + ' • Age ' + age;
   }
@@ -2812,12 +2818,12 @@ function bucketForTime(time) {
 }
 
 function isMedExpired(m) {
-  if (!m.endDate) return false;
-  return new Date(m.endDate + 'T23:59:59').getTime() < Date.now();
+  if (!ymd(m.endDate)) return false;
+  return new Date(ymd(m.endDate) + 'T23:59:59').getTime() < Date.now();
 }
 function medEndDateLabel(m) {
-  if (!m.endDate) return '';
-  const label = new Date(m.endDate + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  if (!ymd(m.endDate)) return '';
+  const label = new Date(ymd(m.endDate) + 'T00:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   return isMedExpired(m) ? 'Course ended ' + label : 'Until ' + label;
 }
 function sortedTimes(m) {
@@ -3012,7 +3018,7 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
 
 function apptFromApi(a) {
-  const d = new Date(a.date + 'T00:00:00');
+  const d = new Date(ymd(a.date) + 'T00:00:00');
   const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return {
@@ -3320,7 +3326,7 @@ function openMedModal(id) {
     document.getElementById('med-dose-input').value = parseFloat(m.dose) || '';
     document.getElementById('med-reason-input').value = m.reason || '';
     document.getElementById('med-pharmacy-input').value = m.pharmacy || '';
-    if (medEndDatePicker) { m.endDate ? medEndDatePicker.setDate(m.endDate) : medEndDatePicker.clear(); }
+    if (medEndDatePicker) { ymd(m.endDate) ? medEndDatePicker.setDate(ymd(m.endDate)) : medEndDatePicker.clear(); }
     const list = document.getElementById('med-times-list');
     destroyPickersIn(list); list.innerHTML = '';
     sortedTimes(m).forEach(t => addMedTimeRow(label12To24(t)));
