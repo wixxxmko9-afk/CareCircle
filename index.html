@@ -325,6 +325,9 @@ select.form-input { -webkit-appearance: none; appearance: none; cursor: pointer;
 .toggle.on::after { transform: translateX(22px); }
 
 /* Role badge */
+.consent-row { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; color: var(--text-secondary); margin: 4px 0 14px; cursor: pointer; }
+.consent-row input { width: 22px; height: 22px; margin: 1px 0 0; flex-shrink: 0; accent-color: var(--sage); }
+.consent-row a { color: var(--sage); font-weight: 600; }
 .sc-name { font-size: 28px; font-weight: 700; color: var(--navy); line-height: 1.15; }
 .sc-sub { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
 .sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
@@ -680,6 +683,11 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
       <label class="form-label">Confirm password</label>
       <input class="form-input" type="password" id="signup-confirm" placeholder="Re-enter your password" autocomplete="new-password" />
     </div>
+    <div class="form-group" id="signup-beta-group" style="display:none;">
+      <label class="form-label">Beta access code</label>
+      <input class="form-input" type="text" id="signup-beta" placeholder="Ask the person who invited you" autocomplete="off" autocapitalize="off" />
+    </div>
+    <label class="consent-row"><input type="checkbox" id="signup-consent"><span>I'm 18 or older and I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Use</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
     <button class="btn btn-primary" onclick="submitSignup()">Join us</button>
     <button type="button" class="forgot-password-link" onclick="openInviteCodeModal()">Have an invite code?</button>
   </div>
@@ -720,6 +728,7 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
       <label class="form-label">Confirm password</label>
       <input class="form-input" type="password" id="join-confirm" placeholder="Re-enter your password" autocomplete="new-password" />
     </div>
+    <label class="consent-row"><input type="checkbox" id="join-consent"><span>I'm 18 or older and I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Use</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
     <button class="btn btn-primary" id="join-submit-btn" onclick="submitJoinFamily()">Join family</button>
   </div>
 </div>
@@ -1188,6 +1197,46 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
   </div>
 </div>
 
+<!-- MODAL: Agree to the Terms (existing accounts; can't be dismissed) -->
+<div class="modal-overlay" id="consent-modal" style="z-index:400;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><div class="modal-title">Before you continue</div></div>
+    <div class="modal-body">
+      <p style="font-size:15px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px;">We've added Terms of Use and a Privacy Policy. Please read them and agree to keep using CareCircle.</p>
+      <div class="auth-error" id="consent-error"></div>
+      <label class="consent-row"><input type="checkbox" id="consent-check"><span>I'm 18 or older and I agree to the <a href="terms.html" target="_blank" rel="noopener">Terms of Use</a> and <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+      <button class="btn btn-primary" onclick="acceptTermsUi()">Agree and continue</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="document.getElementById('consent-modal').classList.remove('open');logOut()">Log out instead</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Delete my account -->
+<div class="modal-overlay" id="delete-modal" style="z-index:260;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Delete my account</div>
+      <button class="modal-close" onclick="closeDeleteAccountModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p id="delete-warning" style="font-size:14px;color:var(--red);line-height:1.5;margin-bottom:14px;"></p>
+      <div class="auth-error" id="delete-error"></div>
+      <div class="form-group">
+        <label class="form-label">Your password</label>
+        <input class="form-input" type="password" id="delete-password" autocomplete="current-password" />
+      </div>
+      <div class="form-group" id="delete-confirm-group">
+        <label class="form-label">Type DELETE to confirm</label>
+        <input class="form-input" type="text" id="delete-confirm-text" autocomplete="off" autocapitalize="characters" />
+      </div>
+      <button class="btn btn-danger" id="delete-confirm-btn" onclick="confirmDeleteAccount()">Delete permanently</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeDeleteAccountModal()">Keep my account</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Share emergency card -->
 <div class="modal-overlay" id="share-modal" style="z-index:250;">
   <div class="modal">
@@ -1514,10 +1563,22 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
 
+      <div class="settings-row" onclick="openLegal('privacy')">
+        <div><div class="settings-label">Privacy Policy</div><div class="settings-sub">What we collect and who can see it</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+      <div class="settings-row" onclick="openLegal('terms')">
+        <div><div class="settings-label">Terms of Use</div><div class="settings-sub">The rules for using CareCircle</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
       <div class="t-sub" style="padding:14px 20px 6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;">Account</div>
       <div class="settings-row" onclick="logOut()">
         <div><div class="settings-label" style="color:var(--red);">Log out</div></div>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+      <div class="settings-row" onclick="openDeleteAccountModal()">
+        <div><div class="settings-label" style="color:var(--red);">Delete my account</div><div class="settings-sub">Permanently erase your account and data</div></div>
       </div>
     </div>
   </div>
@@ -1649,6 +1710,10 @@ function answerConfirm(yes) {
 ═══════════════════════════════════════════════════════════ */
 /* Date-only values should be YYYY-MM-DD. If a spreadsheet ever hands back a full
    timestamp ("1940-05-01T00:00:00.000Z"), keep just the date part. */
+function showBetaField() { const g = document.getElementById('signup-beta-group'); if (g) g.style.display = ''; }
+async function loadSignupConfig() {
+  try { const c = await callApi('getSignupConfig'); if (c && c.betaCodeRequired) showBetaField(); } catch (e) { /* the field also appears if signup says a code is needed */ }
+}
 function ymd(v) {
   const m = /^(\d{4}-\d{2}-\d{2})/.exec(String(v == null ? '' : v));
   return m ? m[1] : '';
@@ -1788,6 +1853,7 @@ async function submitSignup() {
   if (!validEmail(email)) { showAuthError('signup', 'Enter a valid email address'); return; }
   if (pw.length < 8) { showAuthError('signup', 'Password must be at least 8 characters'); return; }
   if (pw !== confirm) { showAuthError('signup', 'Passwords do not match'); return; }
+  if (!document.getElementById('signup-consent').checked) { showAuthError('signup', 'Please tick the box to confirm you are 18 or older and agree to the Terms and Privacy Policy.'); return; }
   hideAuthError('signup');
 
   pendingInviteDrafts = [];
@@ -1802,7 +1868,7 @@ async function submitSignup() {
   authInFlight = true;
   showBusy('Creating your account…');
   try {
-    const data = await callApi('signupUser', { fullName, email, password: pw, plan: 'free' });
+    const data = await callApi('signupUser', { fullName, email, password: pw, plan: 'free', acceptTerms: true, betaCode: document.getElementById('signup-beta').value.trim() || undefined });
     saveAuthToken(data.token);
     currentUser = data.user;
     currentFamily = data.family;
@@ -1810,6 +1876,7 @@ async function submitSignup() {
     document.getElementById('ob-skip').style.display = '';
     document.getElementById('invite-screen').style.display = 'flex';
   } catch (err) {
+    if (/beta access code|invite-only/i.test(err.message)) showBetaField();
     showAuthError('signup', err.message);
   } finally {
     authInFlight = false;
@@ -1923,6 +1990,59 @@ function renderSettingsFamilyInfo() {
   document.getElementById('settings-member-list').innerHTML = joinedRows + invitedRows;
   document.getElementById('feed-family-subtitle').textContent =
     (currentFamily ? currentFamily.name : '') + ' • ' + total + (total === 1 ? ' member' : ' members');
+}
+
+/* ── Terms / privacy consent + deleting your account ── */
+function openLegal(page) { window.open(page + '.html', '_blank', 'noopener'); }
+// Accounts made before the Terms existed (or before they changed) are asked once.
+function checkConsent() {
+  if (!currentUser || !currentUser.termsVersion) return;
+  if (currentUser.consentVersion === currentUser.termsVersion) return;
+  document.getElementById('consent-check').checked = false;
+  document.getElementById('consent-error').classList.remove('show');
+  document.getElementById('consent-modal').classList.add('open');
+}
+async function acceptTermsUi() {
+  if (!document.getElementById('consent-check').checked) {
+    const e = document.getElementById('consent-error'); e.textContent = 'Please tick the box to continue.'; e.classList.add('show'); return;
+  }
+  try {
+    await callApi('acceptTerms', { acceptTerms: true });
+    currentUser.consentVersion = currentUser.termsVersion;
+    document.getElementById('consent-modal').classList.remove('open');
+  } catch (err) { const e = document.getElementById('consent-error'); e.textContent = err.message; e.classList.add('show'); }
+}
+function openDeleteAccountModal() {
+  const primary = currentUser.role === 'primary_caregiver';
+  closeSettings();
+  document.getElementById('delete-warning').innerHTML = primary
+    ? '<b>This deletes your whole family\'s CareCircle for everyone.</b> Every medication, appointment, emergency card, post, shift and member is permanently erased, and everyone is logged out. This can\'t be undone.'
+    : '<b>This deletes your account.</b> You\'ll be removed from the family, and your posts, comments and reactions are erased. The family\'s medications and records stay. This can\'t be undone.';
+  document.getElementById('delete-confirm-group').style.display = primary ? '' : 'none';
+  ['delete-password', 'delete-confirm-text'].forEach(id => { document.getElementById(id).value = ''; });
+  document.getElementById('delete-error').classList.remove('show');
+  document.getElementById('delete-modal').classList.add('open');
+}
+function closeDeleteAccountModal() { document.getElementById('delete-modal').classList.remove('open'); }
+let deleteInFlight = false;
+async function confirmDeleteAccount() {
+  if (deleteInFlight) return;
+  const err = document.getElementById('delete-error');
+  const password = document.getElementById('delete-password').value;
+  const primary = currentUser.role === 'primary_caregiver';
+  const confirmText = document.getElementById('delete-confirm-text').value;
+  if (!password) { err.textContent = 'Enter your password to confirm.'; err.classList.add('show'); return; }
+  if (primary && confirmText.trim().toUpperCase() !== 'DELETE') { err.textContent = 'Type DELETE to confirm.'; err.classList.add('show'); return; }
+  deleteInFlight = true;
+  const btn = document.getElementById('delete-confirm-btn'); btn.disabled = true;
+  try {
+    await callApi('deleteAccount', { password, confirmText: primary ? confirmText : undefined });
+    closeDeleteAccountModal();
+    await logOut();
+    showToast('Your account has been deleted');
+  } catch (e) {
+    err.textContent = e.message; err.classList.add('show');
+  } finally { deleteInFlight = false; btn.disabled = false; }
 }
 
 /* ── Share the emergency card ── */
@@ -2481,6 +2601,7 @@ function enterApp() {
   document.getElementById('settings-account-role').textContent = roleLabel(currentUser.role);
   applyRoleUI();
   goTo('home');
+  checkConsent();
 }
 function roleLabel(role) {
   if (role === 'primary_caregiver') return 'Primary caregiver';
@@ -2573,7 +2694,7 @@ async function startApp() {
     try { hasSession = !!localStorage.getItem(AUTH_TOKEN_KEY); } catch {}
     // Nothing to restore: wake the (possibly cold) backend now, while the
     // person is still typing, so sign-up isn't the first request to hit it.
-    if (!hasSession) { try { fetch(API_ENDPOINT, { mode: 'no-cors' }).catch(() => {}); } catch {} }
+    if (!hasSession) { try { fetch(API_ENDPOINT, { mode: 'no-cors' }).catch(() => {}); } catch {} loadSignupConfig(); }
     await attemptSessionRestore();
   }
 }
@@ -2600,12 +2721,13 @@ async function submitJoinFamily() {
   errEl.classList.remove('show');
   if (password.length < 8) { errEl.textContent = 'Password must be at least 8 characters'; errEl.classList.add('show'); return; }
   if (password !== confirm) { errEl.textContent = 'Passwords do not match'; errEl.classList.add('show'); return; }
+  if (!document.getElementById('join-consent').checked) { errEl.textContent = 'Please tick the box to confirm you are 18 or older and agree to the Terms and Privacy Policy.'; errEl.classList.add('show'); return; }
 
   joinSubmitInFlight = true;
   const btn = document.getElementById('join-submit-btn');
   btn.disabled = true;
   try {
-    const data = await callApi('signupViaInvite', { token: inviteToken, password });
+    const data = await callApi('signupViaInvite', { token: inviteToken, password, acceptTerms: true });
     saveAuthToken(data.token);
     currentUser = data.user;
     currentFamily = data.family;
@@ -3751,6 +3873,8 @@ function logOut() {
   });
   hideAuthError('login');
   hideAuthError('signup');
+  ['signup-beta'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  ['signup-consent', 'join-consent'].forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
   updateSignupPasswordHint();
   showToast('Logged out');
 }
