@@ -1197,6 +1197,29 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
   </div>
 </div>
 
+<!-- MODAL: Email reminders -->
+<div class="modal-overlay" id="email-reminders-modal" style="z-index:250;">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <div class="modal-title">Email reminders</div>
+      <button class="modal-close" onclick="closeEmailRemindersModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text-secondary);line-height:1.5;margin-bottom:6px;">Sent to <b id="er-email"></b>, even when the app is closed.</p>
+      <p style="font-size:13px;color:var(--red);line-height:1.5;margin-bottom:12px;font-weight:600;">These emails name medications and doses. Only turn them on for an inbox only you can read.</p>
+      <div class="auth-error" id="er-error"></div>
+      <label class="consent-row"><input type="checkbox" id="er-due"><span><b>Dose coming up.</b> About 10 minutes before each dose, if it isn't marked taken yet.</span></label>
+      <label class="consent-row"><input type="checkbox" id="er-missed"><span><b>Missed dose.</b> If nobody marks a dose taken within 45 minutes.</span></label>
+      <label class="consent-row"><input type="checkbox" id="er-appt"><span><b>Appointment tomorrow.</b> One email the evening before (about 6 PM).</span></label>
+      <p class="settings-sub" id="er-tz" style="margin:4px 0 8px;"></p>
+      <p class="settings-sub" style="margin:0 0 14px;">Emails can arrive a few minutes late or, rarely, not at all. Don't rely on them as your only reminder.</p>
+      <button class="btn btn-primary" onclick="saveEmailReminders()">Save</button>
+      <button class="btn btn-secondary" style="margin-top:10px;" onclick="closeEmailRemindersModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Agree to the Terms (existing accounts; can't be dismissed) -->
 <div class="modal-overlay" id="consent-modal" style="z-index:400;">
   <div class="modal">
@@ -1542,6 +1565,10 @@ span.flatpickr-weekday { color: var(--text-muted); font-weight: 700; }
         <div><div class="settings-label">Medication reminders</div><div class="settings-sub">Notify 10 min before and when a dose is due — only while this app is open in a browser tab</div></div>
         <button class="toggle" id="reminders-toggle" aria-label="Toggle medication reminders"></button>
       </div>
+      <div class="settings-row" onclick="openEmailRemindersModal()">
+        <div><div class="settings-label">Email reminders</div><div class="settings-sub" id="email-reminders-sub">Off. Get emails even when the app is closed</div></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
       <div class="settings-row" style="cursor:default;flex-direction:column;align-items:stretch;">
         <div class="settings-label" style="margin-bottom:8px;">Region / timezone</div>
         <select class="form-input" id="timezone-select" onchange="setTimezone(this.value)"></select>
@@ -1868,7 +1895,7 @@ async function submitSignup() {
   authInFlight = true;
   showBusy('Creating your account…');
   try {
-    const data = await callApi('signupUser', { fullName, email, password: pw, plan: 'free', acceptTerms: true, betaCode: document.getElementById('signup-beta').value.trim() || undefined });
+    const data = await callApi('signupUser', { fullName, email, password: pw, plan: 'free', acceptTerms: true, timezone: getStoredTimezone(), betaCode: document.getElementById('signup-beta').value.trim() || undefined });
     saveAuthToken(data.token);
     currentUser = data.user;
     currentFamily = data.family;
@@ -1990,6 +2017,40 @@ function renderSettingsFamilyInfo() {
   document.getElementById('settings-member-list').innerHTML = joinedRows + invitedRows;
   document.getElementById('feed-family-subtitle').textContent =
     (currentFamily ? currentFamily.name : '') + ' • ' + total + (total === 1 ? ' member' : ' members');
+}
+
+/* ── Email reminders (sent by the server, even when the app is closed) ── */
+function openEmailRemindersModal() {
+  closeSettings();
+  const u = currentUser;
+  document.getElementById('er-due').checked = !!u.remindDue;
+  document.getElementById('er-missed').checked = !!u.remindMissed;
+  document.getElementById('er-appt').checked = !!u.remindAppt;
+  const tz = (currentFamily && currentFamily.timezone) || null;
+  document.getElementById('er-tz').textContent = tz
+    ? 'Times follow your family\'s timezone: ' + tz.replace(/_/g, ' ') + '.' + (can('manageHealth') ? ' You can change it under Region / timezone in Settings.' : ' A caregiver can change it in Settings.')
+    : 'Your family\'s timezone isn\'t set yet. A caregiver sets it by opening the app (or under Region / timezone in Settings).';
+  document.getElementById('er-email').textContent = u.email;
+  document.getElementById('er-error').classList.remove('show');
+  document.getElementById('email-reminders-modal').classList.add('open');
+}
+function closeEmailRemindersModal() { document.getElementById('email-reminders-modal').classList.remove('open'); }
+async function saveEmailReminders() {
+  const err = document.getElementById('er-error');
+  err.classList.remove('show');
+  const due = document.getElementById('er-due').checked, missed = document.getElementById('er-missed').checked, appt = document.getElementById('er-appt').checked;
+  try {
+    const r = await callApi('setReminderPrefs', { due, missed, appt });
+    currentUser.remindDue = r.remindDue; currentUser.remindMissed = r.remindMissed; currentUser.remindAppt = r.remindAppt;
+    closeEmailRemindersModal();
+    showToast(r.remindDue || r.remindMissed || r.remindAppt ? 'Email reminders saved' : 'Email reminders are off');
+    renderEmailRemindersSummary();
+  } catch (e) { err.textContent = e.message; err.classList.add('show'); }
+}
+function renderEmailRemindersSummary() {
+  const el = document.getElementById('email-reminders-sub'); if (!el || !currentUser) return;
+  const on = [currentUser.remindDue && 'dose due', currentUser.remindMissed && 'missed dose', currentUser.remindAppt && 'appointments'].filter(Boolean);
+  el.textContent = on.length ? 'On: ' + on.join(', ') : 'Off. Get emails even when the app is closed';
 }
 
 /* ── Terms / privacy consent + deleting your account ── */
@@ -2602,6 +2663,7 @@ function enterApp() {
   applyRoleUI();
   goTo('home');
   checkConsent();
+  syncFamilyTimezone();
 }
 function roleLabel(role) {
   if (role === 'primary_caregiver') return 'Primary caregiver';
@@ -3718,6 +3780,7 @@ function openSettings()  {
   document.getElementById('settings-modal').classList.add('open');
   populateTimezoneSelect();
   document.getElementById('reminders-toggle').classList.toggle('on', remindersEnabled());
+  renderEmailRemindersSummary();
 }
 function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
 
@@ -3738,6 +3801,16 @@ function getStoredTimezone() {
 function setTimezone(tz) {
   try { localStorage.setItem(TIMEZONE_KEY, tz); } catch {}
   showToast('Timezone set to ' + tz.replace(/_/g, ' '));
+  // The server sends email reminders in the FAMILY's timezone, so caregivers' choice also sets that.
+  if (currentUser && can('manageHealth')) {
+    callApi('setFamilyTimezone', { timezone: tz }).then(r => { if (currentFamily) currentFamily.timezone = r.timezone; }).catch(() => {});
+  }
+}
+// First time a caregiver opens an older family: tell the server which timezone to use for email reminders.
+function syncFamilyTimezone() {
+  if (!currentUser || !currentFamily || currentFamily.timezone || !can('manageHealth')) return;
+  const tz = getStoredTimezone();
+  callApi('setFamilyTimezone', { timezone: tz }).then(r => { currentFamily.timezone = r.timezone; }).catch(() => {});
 }
 function remindersEnabled() {
   try { return localStorage.getItem(REMINDERS_KEY) === 'true'; } catch { return false; }
